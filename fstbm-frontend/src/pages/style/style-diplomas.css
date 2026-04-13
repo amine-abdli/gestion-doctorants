@@ -1,0 +1,163 @@
+/* ===== Diplomas.css ===== */
+
+.diplomas-container {
+  padding: 32px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.diplomas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.diplomas-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.btn-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+.btn-add:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+}
+
+/* Table Card */
+.table-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  border: 1px solid #f3f4f6;
+}
+
+.diplomas-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.diplomas-table thead {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.diplomas-table th {
+  padding: 16px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #6b7280;
+  letter-spacing: 0.05em;
+}
+
+.diplomas-table td {
+  padding: 16px 24px;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.diplomas-table tr:last-child td {
+  border-bottom: none;
+}
+
+.diplomas-table tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Badges */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-complet {
+  background-color: #def7ec;
+  color: #03543f;
+}
+
+.status-incomplet {
+  background-color: #fde8e8;
+  color: #9b1c1c;
+}
+
+/* Actions */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #4b5563;
+}
+
+.btn-icon:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.btn-icon.view:hover {
+  color: #2563eb;
+  border-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.btn-icon.delete:hover {
+  color: #dc2626;
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.btn-print-mini {
+  padding: 6px 12px;
+  background: #059669;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-print-mini:hover {
+  background: #047857;
+}
+
+.text-empty {
+  color: #9ca3af;
+  font-style: italic;
+}

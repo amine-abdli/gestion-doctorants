@@ -1,0 +1,155 @@
+.card-calcul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+ 
+}
+
+/* card -1 */
+.card-calcul-1{
+  background-image: url("../image/doctorant.png");
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+   width: 560px;
+   height: 250px;
+   border-radius: 10px;
+   border: 0.5px solid #d7d8d8;
+   
+  
+
+   
+}
+.card-calcul-1-title{
+    
+  position: relative;
+ top: 50px;
+ left: 20px;
+   
+    font-size: 15px;
+   
+    
+    color: #91999c;
+
+}
+.card-calcul-1-number{
+    font-size: 70px;
+   padding-left: 20px;
+    font-weight: bold;
+    color: #2527a0;
+}
+.card-calcul-1-text{
+    font-size: 15px;
+  position: relative;
+  bottom: 10px;
+  left: 20px;
+    
+    color: #b8b3b3;
+}
+.card-calcul-1:hover{
+  transform: translateY(-8px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+}
+
+/* card-2 */
+
+/* card-child-1 */
+.card-calcul-2-child-1{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  border-left: 10px solid #452c1a;
+  border-radius: 10px;
+    height: 115px;
+    width: 250px;
+  margin-left: 10px;
+    margin-right: 50px;
+   
+    background-color: white;
+    
+}
+
+.card-calcul-2-child-1-number{
+    font-size: 25px;
+   padding-left: 10px;
+    font-weight: bold;
+    color: #222345;
+}
+.card-calcul-2-child-1-text{
+    font-size: 14px;
+  position: relative;
+  bottom: 4px;
+  left: 10px;
+    
+    color: #b8b3b3;
+}
+.card-calcul-2-child-1-icon{
+    
+    width: 30px;
+    height: 30px;
+    position: relative;
+    bottom: 20px;
+    color: 452c1a;
+    
+}
+.card-calcul-2-child-1:hover{
+  transform: scale(1.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 0.5px solid #d7d8d8;
+  border-radius: 10px;
+}
+/* .card-calcul-2-child-2 */
+ .card-calcul-2-child-2{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-left: 10px solid #11093c;
+    height: 115px;
+    margin-top: 10px;
+   margin-left: 10px;
+    margin-right: 50px;
+  border-radius: 10px;
+  background-color: white;
+   
+    
+}
+.card-calcul-2-child-2-text-number{
+    
+     font-size: 25px;
+   padding-left: 10px;
+    font-weight: bold;
+    color: #131336;
+    
+
+}
+.card-calcul-2-child-2-text{
+    font-size: 14px;
+  position: relative;
+  bottom: 16px;
+  left: 1px;
+    
+    color: #b8b3b3;
+}
+.card-calcul-2-child-2-icon{
+    position: relative;
+    bottom: 20px;
+    
+    width: 30px;
+    height: 30px;
+    
+}
+.card-calcul-2-child-2:hover{
+  transform: scale(1.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 0.5px solid #d7d8d8;
+  border-radius: 10px;
+}

@@ -1,0 +1,239 @@
+/* ── Reset & Variables ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary:       #2563eb;
+  --primary-hover: #1d4ed8;
+  --danger:        #dc2626;
+  --danger-hover:  #b91c1c;
+  --surface:       #ffffff;
+  --surface-alt:   #f8fafc;
+  --border:        #e2e8f0;
+  --border-hover:  #cbd5e1;
+  --text:          #0f172a;
+  --text-muted:    #64748b;
+  --radius:        8px;
+  --shadow:        0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:     0 4px 12px rgba(0,0,0,0.10);
+}
+
+/* ── Page Container ── */
+.jury-page-container {
+  padding: 24px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: var(--text);
+  max-width: 1100px;
+}
+
+/* ── Buttons ── */
+.btn-primary,
+.btn-secondary,
+.btn-action,
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+.btn-secondary:hover { background: var(--surface-alt); border-color: var(--border-hover); }
+
+.btn-action {
+  background: #eff6ff;
+  color: var(--primary);
+  border-color: #bfdbfe;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+.btn-action:hover { background: #dbeafe; }
+
+.btn-danger {
+  background: #fef2f2;
+  color: var(--danger);
+  border-color: #fecaca;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+.btn-danger:hover { background: #fee2e2; }
+
+/* ── Table ── */
+.affichagejury {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.affichagejury table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.affichagejury thead {
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.affichagejury th {
+  padding: 12px 16px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.affichagejury td {
+  padding: 13px 16px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.affichagejury tbody tr:last-child td { border-bottom: none; }
+.affichagejury tbody tr:hover { background: var(--surface-alt); }
+
+.affichagejury td:last-child,
+.affichagejury th:last-child {
+  text-align: center;
+}
+
+/* Actions cell — keep buttons inline */
+.affichagejury td .btn-action,
+.affichagejury td .btn-danger {
+  margin: 0 3px;
+}
+
+/* ── Modal Overlay ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+/* ── Modal Content ── */
+.modal-content {
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  padding: 28px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.modal-content h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2px;
+}
+
+/* ── Form Fields ── */
+.modal-content label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: -8px;
+  display: block;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="search"],
+.modal-content select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--surface-alt);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content input[type="search"]:focus,
+.modal-content select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  background: #fff;
+}
+
+/* ── Doctorant List ── */
+.modal-list {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--surface);
+}
+
+.modal-list-item {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-list-item:last-child { border-bottom: none; }
+.modal-list-item:hover { background: #eff6ff; }
+
+.modal-list-item.selected {
+  background: #eff6ff;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.modal-list-item.selected span:last-child { color: var(--primary); }
+
+/* ── Modal Actions ── */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.modal-actions .btn-secondary,
+.modal-actions .btn-primary {
+  flex: 1;
+}

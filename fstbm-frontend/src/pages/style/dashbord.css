@@ -1,0 +1,128 @@
+/* Header */
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+
+}
+
+.dash-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #1a2e5a;
+  margin: 0;
+}
+
+
+.dash-session {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 8px;
+}
+/* les cardes doctorants et jury */
+
+.caret-insericption{
+  display: flex;
+  gap: 40px;
+ width: 100%;
+ margin-top: 20px;
+ margin-bottom: 20px;
+  
+}
+.doctorants{
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  width: 450px;
+  height: 200px;
+  color: #e2e8f0;
+  background-color: #1e293b;
+}
+.action-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+}
+
+.card-icon, .action-card-icon-outline-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-icon {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.action-card-icon-outline-icon {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.action-card-text {
+  flex-grow: 1;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.action-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.action-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.action-arrow, .action-arrow-jury {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.action-card:hover .action-arrow,
+.action-card:hover .action-arrow-jury {
+  transform: translateX(5px);
+  opacity: 1;
+}
+
+.jury {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  width: 450px;
+  height: 200px;
+  background-color: #f1f5f9;
+  color: #1a2e5a;
+}
+
+
+
+
+
+
+
+
+
+
+
+
