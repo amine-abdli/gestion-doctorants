@@ -76,10 +76,10 @@ export default function Dashbord() {
 
             {/* Footer */}
             <footer className="dash-footer">
-                <span>© 2024 AppStage - cree by amine abdli</span>
+                <span>© 2026 gestion-doctorants cree by     amine abdli</span>
                 <div className="footer-links">
                    
-                    <a href="#">Support Universitaire</a>
+                    <a href="https://fstbm.ac.ma" target="_blank">Support Universitaire fstbm.ma</a>
                 </div>
             </footer>
         </div>

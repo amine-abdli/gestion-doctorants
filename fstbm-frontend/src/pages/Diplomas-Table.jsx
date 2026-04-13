@@ -3,6 +3,21 @@ import "./style/Diplomas-Table.css";
 import { Link } from "react-router-dom";
 import { getDoctorants } from "../services/api";
 
+function getCompletionStatus(doc) {
+  const requiredFields = [
+    'nmb_inscription', 'nomfr', 'nomarb', 'cin',
+    'date_naissance', 'lieu_naissance_arb',
+    'discipline_fr', 'specialite_fr',
+    'sujet_fr', 'mention_fr',
+    'date_descution_jury', 'date_obtinu_diplome', 'status'
+  ];
+  for (const field of requiredFields) {
+    if (!doc[field] || String(doc[field]).trim() === '') return 'attente';
+  }
+  if (!Array.isArray(doc.juries) || doc.juries.length === 0) return 'attente';
+  return 'complet';
+}
+
 export default function DiplomasTable() {
     const [diplomas, setDiplomas] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -23,7 +38,7 @@ export default function DiplomasTable() {
     return (
         <div className="diplomas-section">
             <div className="diplomas-header">
-                <h2 className="diplomas-title"> Derniers Doctorants Inscrits</h2>
+                <h2 className="diplomas-title">Derniers Doctorants Inscrits</h2>
                 <Link to="/diplomes" className="diplomas-link">Voir tout l'historique ↗</Link>
             </div>
             <table className="diplomas-table">
@@ -55,9 +70,14 @@ export default function DiplomasTable() {
                                 <td>{d.nmb_inscription || "—"}</td>
                                 <td>{d.discipline_fr || d.discipline_arb || "—"}</td>
                                 <td>
-                                    <span className={`status ${d.status === "Diplômé" ? "delivered" : "pending"}`}>
-                                        {d.status || "Actif"}
-                                    </span>
+                                    {(() => {
+                                        const s = getCompletionStatus(d);
+                                        return (
+                                            <span className={`status-badge ${s === 'complet' ? 'dossier-complet' : 'dossier-attente'}`}>
+                                                {s === 'complet' ? 'Complet' : 'En attente'}
+                                            </span>
+                                        );
+                                    })()}
                                 </td>
                                 <td>
                                     <Link to="/diplomes" className="view-link">Voir détails ↗</Link>

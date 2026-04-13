@@ -5,6 +5,26 @@ import Doctorants from "./doctorants";
 import AficherDitailDeDoctoran from "./aficher-ditail-de-doctoran";
 import "./style/tablau-docto.css";
 
+function getCompletionStatus(doc) {
+  const requiredFields = [
+    'nmb_inscription', 'nomfr', 'nomarb', 'cin',
+    'date_naissance', 'lieu_naissance_arb',
+    'discipline_fr', 'specialite_fr',
+    'sujet_fr', 'mention_fr',
+    'date_descution_jury', 'date_obtinu_diplome', 'status'
+  ];
+  for (let field of requiredFields) {
+    if (!doc[field] || String(doc[field]).trim() === '') {
+      return 'attente';
+    }
+  }
+
+  if (!doc.juries) {
+    return 'attente';
+  }
+
+  return 'complet';
+}
 export default function TablauDocto() {
   const [doctorants, setDoctorants] = useState([]);
   const [showDoctorantsForm, setShowDoctorantsForm] = useState(false);
@@ -12,11 +32,8 @@ export default function TablauDocto() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ── Détails ──
   const [showDetails, setShowDetails] = useState(false);
   const [selectedDoctorant, setSelectedDoctorant] = useState(null);
-
-  // ── Modifier ──
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [juryList, setJuryList] = useState([]);
@@ -40,7 +57,6 @@ export default function TablauDocto() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Supprimer ce doctorant ?")) return;
     try {
       await deleteDoctorant(id);
       setDoctorants(prev => prev.filter(d => d.id !== id));
@@ -68,11 +84,10 @@ export default function TablauDocto() {
     <div className="doctorants-container">
       <div className="doctorants-wrapper">
 
-        {/* ── Header ── */}
         <div className="doctorants-header">
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <div className="header-group">
             <div className="doctorants-stats">
-              {doctorants.length} doctorant{doctorants.length !== 1 ? "s" : ""}
+              {doctorants.length} doctorants
             </div>
             {!showDoctorantsForm && (
               <button className="btn-add-header" onClick={() => setShowDoctorantsForm(true)}>
@@ -85,21 +100,12 @@ export default function TablauDocto() {
           </div>
         </div>
 
-        {/* ── Erreur ── */}
-        {error && (
-          <div style={{ padding: '12px 16px', background: '#fef2f2', borderRadius: '8px', color: '#dc2626', marginBottom: '16px', fontWeight: 500 }}>
-            ⚠️ {error}
-          </div>
-        )}
-
-        {/* ── Formulaire Ajout ── */}
         {showDoctorantsForm && (
-          <div style={{ position: 'relative', marginBottom: '2rem' }}>
+          <div className="form-overlay-wrapper">
             <button
               onClick={() => setShowDoctorantsForm(false)}
               className="btn-close"
               title="Fermer"
-              style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 10 }}
             >
               ✕
             </button>
@@ -107,30 +113,24 @@ export default function TablauDocto() {
           </div>
         )}
 
-        {/* ── Recherche ── */}
         {!loading && !showDoctorantsForm && doctorants.length > 0 && (
           <div className="search-container">
             <input
               type="text"
               className="search-input"
-              placeholder="🔍 Nom, CIN, N° inscription..."
+              placeholder=" Nom, CIN, N inscription..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
             />
             {searchTerm && (
               <span className="search-results">
-                {filteredDoctorants.length} résultat{filteredDoctorants.length !== 1 ? "s" : ""}
+                {filteredDoctorants.length} résultats
               </span>
             )}
           </div>
         )}
 
-        {/* ── Chargement ── */}
-        {loading && (
-          <div style={{ textAlign: 'center', padding: '48px', color: '#64748b' }}>Chargement...</div>
-        )}
 
-        {/* ── Tableau ── */}
         {!loading && !showDoctorantsForm && (
           <>
             {doctorants.length > 0 ? (
@@ -139,62 +139,61 @@ export default function TablauDocto() {
                   <thead>
                     <tr>
                       <th>N° Inscription</th>
-                      <th>Nom (FR)</th>
+                      <th>Nom</th>
                       <th>الإسم</th>
                       <th>CIN</th>
                       <th>Discipline</th>
-                      <th>Statut</th>
-                      <th style={{ textAlign: 'center' }}>Actions</th>
+                      
+                      <th className="td-center">Dossier</th>
+                      <th className="td-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredDoctorants.map(doc => (
-                      <tr key={doc.id}>
-                        <td style={{ fontFamily: 'monospace', color: '#475569' }}>{doc.nmb_inscription || "—"}</td>
-                        <td style={{ fontWeight: 600, color: '#0f172a' }}>{doc.nomfr || "—"}</td>
-                        <td dir="rtl" style={{ color: '#0f172a' }}>{doc.nomarb || "—"}</td>
-                        <td style={{ color: '#64748b' }}>{doc.cin || "—"}</td>
-                        <td style={{ color: '#475569' }}>{doc.discipline_fr || doc.discipline_arb || "—"}</td>
-                        <td>
-                          <span style={{
-                            padding: '3px 10px', borderRadius: '12px', fontSize: '0.78rem', fontWeight: 600,
-                            background: doc.status === 'Diplômé' ? '#dcfce7' : doc.status === 'Suspendu' ? '#fef2f2' : '#f1f5f9',
-                            color: doc.status === 'Diplômé' ? '#16a34a' : doc.status === 'Suspendu' ? '#dc2626' : '#475569'
-                          }}>
-                            {doc.status || "—"}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="table-actions" style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                            {/* Voir détails */}
-                            <button
-                              className="btn-view"
-                              onClick={() => { setSelectedDoctorant(doc); setShowDetails(true); }}
-                              title="Voir les détails"
-                            >
-                              👁 Voir
-                            </button>
-                            {/* Modifier */}
-                            <button
-                              className="btn-view"
-                              style={{ background: '#fef3c7', color: '#d97706', border: '1px solid #fde68a' }}
-                              onClick={() => handleEdit(doc)}
-                              title="Modifier"
-                            >
-                              ✏ Modifier
-                            </button>
-                            {/* Supprimer */}
-                            <button
-                              className="btn-delete"
-                              onClick={() => handleDelete(doc.id)}
-                              title="Supprimer"
-                            >
-                              🗑 Supprimer
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    {filteredDoctorants.map(doc => {
+                      const dossier = getCompletionStatus(doc);
+                   
+
+                      return (
+                        <tr key={doc.id}>
+                          <td className="td-inscription">{doc.nmb_inscription || "—"}</td>
+                          <td className="td-nom">{doc.nomfr || "—"}</td>
+                          <td className="td-nomarb" dir="rtl">{doc.nomarb || "—"}</td>
+                          <td className="td-cin">{doc.cin || "—"}</td>
+                          <td className="td-discipline">{doc.discipline_fr || doc.discipline_arb || "—"}</td>
+                          
+                          <td className="td-center">
+                            <span className={`badge-dossier badge-dossier--${dossier}`}>
+                              {dossier === 'complet' ? ' Complet' : ' En attente'}
+                            </span>
+                          </td>
+                          <td>
+                            <div className="table-actions">
+                              <button
+                                className="btn-view"
+                                onClick={() => { setSelectedDoctorant(doc); setShowDetails(true); }}
+                                title="Voir les détails"
+                              >
+                                Voir
+                              </button>
+                     <button
+                                className="btn-modifier"
+                                onClick={() => handleEdit(doc)}
+                                title="Modifier"
+                              >
+                                Modifier
+                              </button>
+                              <button
+                                className="btn-delete"
+                                onClick={() => handleDelete(doc.id)}
+                                title="Supprimer"
+                              >
+                                Supprimer
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -209,7 +208,6 @@ export default function TablauDocto() {
         )}
       </div>
 
-      {/* ── Détails Doctorant ── */}
       {showDetails && selectedDoctorant && (
         <AficherDitailDeDoctoran
           doctorant={selectedDoctorant}
@@ -217,7 +215,6 @@ export default function TablauDocto() {
         />
       )}
 
-      {/* ── Modal Modifier ── */}
       {showEditModal && editTarget && (
         <EditDoctorantModal
           doctorant={editTarget}
@@ -230,9 +227,6 @@ export default function TablauDocto() {
   );
 }
 
-/* ═══════════════════════════════════════════
-   Modal de Modification d'un Doctorant
-═══════════════════════════════════════════ */
 function EditDoctorantModal({ doctorant, juryList, onClose, onSuccess }) {
   const [form, setForm] = useState({
     numero: doctorant.numero || "",
@@ -256,10 +250,12 @@ function EditDoctorantModal({ doctorant, juryList, onClose, onSuccess }) {
 
   const [selectedJury, setSelectedJury] = useState(
     (doctorant.juries || []).map(j => ({
-      id: j.id, nom: j.nom,
-      role: j.pivot?.role || "",
-      grade: j.pivot?.grade || "",
-      local: j.pivot?.local || "",
+      uid: `${j.id}-${Date.now()}-${Math.random()}`,
+      id: j.id,
+      nom: j.nom,
+      role: j.pivot?.role || j.role || "",
+      grade: j.pivot?.grade || j.grade || "",
+      local: j.pivot?.local || j.local || "",
     }))
   );
   const [submitting, setSubmitting] = useState(false);
@@ -267,12 +263,14 @@ function EditDoctorantModal({ doctorant, juryList, onClose, onSuccess }) {
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
   const handleJurySelect = (jury) => {
-    if (selectedJury.find(j => j.id === jury.id)) return;
-    setSelectedJury(prev => [...prev, { id: jury.id, nom: jury.nom, role: "", grade: "", local: jury.local || "" }]);
+    setSelectedJury(prev => [
+      ...prev,
+      { uid: `${jury.id}-${Date.now()}`, id: jury.id, nom: jury.nom, role: "", grade: "", local: jury.local || "" }
+    ]);
   };
 
-  const handleJuryChange = (id, field, value) => {
-    setSelectedJury(prev => prev.map(j => j.id === id ? { ...j, [field]: value } : j));
+  const handleJuryChange = (uid, field, value) => {
+    setSelectedJury(prev => prev.map(j => j.uid === uid ? { ...j, [field]: value } : j));
   };
 
   const handleSubmit = async e => {
@@ -295,57 +293,43 @@ function EditDoctorantModal({ doctorant, juryList, onClose, onSuccess }) {
   };
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.55)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 2000, padding: '20px'
-    }}
-      onClick={onClose}
-    >
-      <div style={{
-        background: '#fff', borderRadius: '16px', width: '100%', maxWidth: '800px',
-        maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 50px rgba(0,0,0,0.25)'
-      }}
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div style={{ padding: '20px 28px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#0f172a' }}>✏️ Modifier le Doctorant</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#64748b' }}>✕</button>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-box" onClick={e => e.stopPropagation()}>
+
+        <div className="modal-header">
+          <h2 className="modal-title"> Modifier le Doctorant</h2>
+          <button onClick={onClose} className="modal-close-btn">✕</button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ padding: '24px 28px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 24px' }}>
-
+        <form onSubmit={handleSubmit} className="modal-body">
+          <div className="modal-grid">
             {[
-              { name: 'numero', label: 'Numéro', type: 'text' },
-              { name: 'nmb_inscription', label: 'N° Inscription *', type: 'text', required: true },
-              { name: 'nomfr', label: 'Nom (FR)', type: 'text' },
-              { name: 'nomarb', label: 'الإسم', type: 'text', dir: 'rtl' },
-              { name: 'cin', label: 'CIN *', type: 'text', required: true },
-              { name: 'date_naissance', label: 'Date naissance', type: 'date' },
-              { name: 'lieu_naissance_arb', label: 'مكان الإزدياد', type: 'text', dir: 'rtl' },
-              { name: 'discipline_fr', label: 'Discipline', type: 'text' },
-              { name: 'specialite_fr', label: 'Spécialité', type: 'text' },
-              { name: 'mention_fr', label: 'Mention', type: 'text' },
-              { name: 'date_descution_jury', label: 'Date soutenance', type: 'date' },
-              { name: 'date_obtinu_diplome', label: "Date diplôme", type: 'date' },
+              { name: 'numero',              label: 'Numéro',            type: 'text' },
+              { name: 'nmb_inscription',     label: 'N° Inscription *',  type: 'text', required: true },
+              { name: 'nomfr',               label: 'Nom (FR)',           type: 'text' },
+              { name: 'nomarb',              label: 'الإسم',              type: 'text', dir: 'rtl' },
+              { name: 'cin',                 label: 'CIN *',              type: 'text', required: true },
+              { name: 'date_naissance',      label: 'Date naissance',     type: 'date' },
+              { name: 'lieu_naissance_arb',  label: 'مكان الإزدياد',      type: 'text', dir: 'rtl' },
+              { name: 'discipline_fr',       label: 'Discipline',         type: 'text' },
+              { name: 'specialite_fr',       label: 'Spécialité',         type: 'text' },
+              { name: 'mention_fr',          label: 'Mention',            type: 'text' },
+              { name: 'date_descution_jury', label: 'Date soutenance',    type: 'date' },
+              { name: 'date_obtinu_diplome', label: 'Date diplôme',       type: 'date' },
             ].map(f => (
-              <div key={f.name} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569' }}>{f.label}</label>
+              <div key={f.name} className="modal-field">
+                <label className="modal-label">{f.label}</label>
                 <input
                   type={f.type} name={f.name} value={form[f.name]}
                   onChange={handleChange} required={f.required} dir={f.dir}
-                  style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem' }}
+                  className="modal-input"
                 />
               </div>
             ))}
 
-            {/* Statut */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569' }}>Statut</label>
-              <select name="status" value={form.status} onChange={handleChange}
-                style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem' }}>
+            <div className="modal-field">
+              <label className="modal-label">Statut</label>
+              <select name="status" value={form.status} onChange={handleChange} className="modal-select">
                 <option value="">-- Sélectionner --</option>
                 <option value="Actif">Actif</option>
                 <option value="Diplômé">Diplômé</option>
@@ -354,39 +338,31 @@ function EditDoctorantModal({ doctorant, juryList, onClose, onSuccess }) {
             </div>
           </div>
 
-          {/* ── Jury ── */}
-          <div style={{ marginTop: '20px' }}>
-            <h3 style={{ margin: '0 0 10px', fontSize: '1rem', color: '#0f172a' }}>🎓 Membres du Jury</h3>
+          <div className="jury-section">
+            <h3 className="jury-section-title"> Membres du Jury</h3>
 
-            {/* Sélection */}
             {juryList.length > 0 && (
-              <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '8px', marginBottom: '12px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-                  <thead style={{ background: '#f8fafc' }}>
+              <div className="jury-picker-wrapper">
+                <table className="jury-picker-table">
+                  <thead>
                     <tr>
-                      <th style={{ padding: '8px 12px', textAlign: 'left' }}>Nom</th>
-                      <th style={{ padding: '8px 12px' }}>Spécialité</th>
-                      <th style={{ padding: '8px 12px' }}>Ajouter</th>
+                      <th>Nom</th>
+                      <th>Spécialité</th>
+                      <th>Ajouter</th>
                     </tr>
                   </thead>
                   <tbody>
                     {juryList.map(j => (
-                      <tr key={j.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '6px 12px' }}>{j.nom}</td>
-                        <td style={{ padding: '6px 12px', color: '#64748b' }}>{j.specialite || "—"}</td>
-                        <td style={{ padding: '6px 12px', textAlign: 'center' }}>
+                      <tr key={j.id}>
+                        <td>{j.nom}</td>
+                        <td className="td-specialite">{j.specialite || "—"}</td>
+                        <td className="td-action">
                           <button
                             type="button"
                             onClick={() => handleJurySelect(j)}
-                            disabled={!!selectedJury.find(s => s.id === j.id)}
-                            style={{
-                              padding: '3px 12px', borderRadius: '6px', border: 'none',
-                              background: selectedJury.find(s => s.id === j.id) ? '#dcfce7' : '#dbeafe',
-                              color: selectedJury.find(s => s.id === j.id) ? '#16a34a' : '#1d4ed8',
-                              fontWeight: 600, cursor: 'pointer', fontSize: '0.8rem'
-                            }}
+                            className="btn-jury-add btn-jury-add--available"
                           >
-                            {selectedJury.find(s => s.id === j.id) ? "✓ Ajouté" : "Ajouter"}
+                            + Ajouter
                           </button>
                         </td>
                       </tr>
@@ -396,36 +372,37 @@ function EditDoctorantModal({ doctorant, juryList, onClose, onSuccess }) {
               </div>
             )}
 
-            {/* Jurys sélectionnés avec rôles */}
             {selectedJury.length > 0 && (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-                <thead style={{ background: '#f1f5f9' }}>
+              <table className="jury-selected-table">
+                <thead>
                   <tr>
-                    <th style={{ padding: '8px' }}>Nom</th>
-                    <th style={{ padding: '8px' }}>Rôle</th>
-                    <th style={{ padding: '8px' }}>Grade</th>
-                    <th style={{ padding: '8px' }}>Établissement</th>
-                    <th style={{ padding: '8px' }}>×</th>
+                    <th>Nom</th>
+                    <th>Rôle</th>
+                    <th>Grade</th>
+                    <th>Établissement</th>
+                    <th>×</th>
                   </tr>
                 </thead>
                 <tbody>
                   {selectedJury.map(j => (
-                    <tr key={j.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '6px 8px', fontWeight: 600 }}>{j.nom}</td>
+                    <tr key={j.uid}>
+                      <td className="td-nom-jury">{j.nom}</td>
                       {['role', 'grade', 'local'].map(field => (
-                        <td key={field} style={{ padding: '4px' }}>
+                        <td key={field}>
                           <input
                             value={j[field]}
-                            onChange={e => handleJuryChange(j.id, field, e.target.value)}
+                            onChange={e => handleJuryChange(j.uid, field, e.target.value)}
                             placeholder={field === 'role' ? 'Ex: Président' : field === 'grade' ? 'Ex: Prof.' : 'Ex: FST BM'}
-                            style={{ width: '100%', padding: '4px 8px', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '0.85rem' }}
+                            className="modal-input-sm"
                           />
                         </td>
                       ))}
-                      <td style={{ padding: '4px', textAlign: 'center' }}>
-                        <button type="button"
-                          onClick={() => setSelectedJury(prev => prev.filter(x => x.id !== j.id))}
-                          style={{ background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '3px 8px' }}>
+                      <td className="td-remove">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedJury(prev => prev.filter(x => x.uid !== j.uid))}
+                          className="btn-remove-jury"
+                        >
                           ✕
                         </button>
                       </td>
@@ -436,14 +413,11 @@ function EditDoctorantModal({ doctorant, juryList, onClose, onSuccess }) {
             )}
           </div>
 
-          {/* Actions */}
-          <div style={{ display: 'flex', gap: '12px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
-            <button type="button" onClick={onClose}
-              style={{ flex: 1, padding: '11px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc', color: '#475569', fontWeight: 600, cursor: 'pointer' }}>
+          <div className="modal-footer">
+            <button type="button" onClick={onClose} className="btn-modal-cancel">
               Annuler
             </button>
-            <button type="submit" disabled={submitting}
-              style={{ flex: 2, padding: '11px', borderRadius: '8px', border: 'none', background: '#2563eb', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>
+            <button type="submit" disabled={submitting} className="btn-modal-save">
               {submitting ? "Enregistrement..." : "✔ Sauvegarder les modifications"}
             </button>
           </div>

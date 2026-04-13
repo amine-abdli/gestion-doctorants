@@ -53,6 +53,7 @@
 /* Search */
 .topbar-center {
   flex: 0 1 360px;
+  margin-left: 300px;
 }
 
 .search-box {
@@ -79,7 +80,7 @@
   flex-shrink: 0;
 }
 
-.search-input {
+.search-inpu {
   width: 100%;
   background: transparent;
   border: none;
@@ -115,9 +116,10 @@
   transition: all 0.2s ease;
 }
 
-.topbar-icon-btn:hover {
-  background: #f1f5f9;
-  color: #aeb1b4;
+.search-inpu:hover{
+  width: 400px;
+
+ 
 }
 
 .topbar-icon-btn svg {

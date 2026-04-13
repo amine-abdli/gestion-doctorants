@@ -24,15 +24,14 @@ export default function Doctorants({ onSuccess }) {
     status: "",
   };
 
-  const [formData, setFormData] = useState(initialForm);
-  const [juryList, setJuryList] = useState([]);
- const [selectedJury, setSelectedJury] = useState([]);
-  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData]         = useState(initialForm);
+  const [juryList, setJuryList]         = useState([]);
+  const [selectedJury, setSelectedJury] = useState([]);
+  const [submitting, setSubmitting]     = useState(false);
 
-  //  jury 
   const [showNewJuryModal, setShowNewJuryModal] = useState(false);
-  const [newJuryForm, setNewJuryForm] = useState({ nom: "", specialite: "", local: "" });
-  const [addingJury, setAddingJury] = useState(false);
+  const [newJuryForm, setNewJuryForm]           = useState({ nom: "", specialite: "", local: "" });
+  const [addingJury, setAddingJury]             = useState(false);
 
   useEffect(() => { loadJuries(); }, []);
 
@@ -41,7 +40,6 @@ export default function Doctorants({ onSuccess }) {
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  
   const handleSelectJury = (jury) => {
     setSelectedJury(prev => [...prev, {
       uid: `${jury.id}-${Date.now()}`,
@@ -52,8 +50,6 @@ export default function Doctorants({ onSuccess }) {
       local: jury.local || ""
     }]);
   };
-
-  // bjaf dyal les rol
 
   const handleJuryChange = (uid, field, value) => {
     setSelectedJury(prev => prev.map(j => j.uid === uid ? { ...j, [field]: value } : j));
@@ -71,7 +67,6 @@ export default function Doctorants({ onSuccess }) {
       const res = await addJury(newJuryForm);
       const created = res.data;
       setJuryList(prev => [...prev, created]);
-
       setSelectedJury(prev => [...prev, {
         uid: `${created.id}-${Date.now()}`,
         id: created.id,
@@ -115,7 +110,9 @@ export default function Doctorants({ onSuccess }) {
   return (
     <div className="doctorants-page-container">
       <div className="doctorants-form-card">
-        <h2>Inscription d'un Doctorant</h2>
+
+        <h2 className="form-card-title">Inscription d'un Doctorant</h2>
+
         <form className="doctorants-form" onSubmit={handleSubmit}>
 
           <div className="input-group">
@@ -182,50 +179,33 @@ export default function Doctorants({ onSuccess }) {
             <label htmlFor="date_obtinu_diplome">Date d'obtention diplôme</label>
             <input type="date" name="date_obtinu_diplome" id="date_obtinu_diplome" value={formData.date_obtinu_diplome} onChange={handleChange} />
           </div>
-          <div className="input-group">
-            <label htmlFor="status">Statut</label>
-            <select name="status" id="status" value={formData.status} onChange={handleChange}>
-              <option value="">-- Sélectionner --</option>
-              <option value="Actif">Actif</option>
-              <option value="Diplômé">Diplômé</option>
-              <option value="Suspendu">Suspendu</option>
-            </select>
-          </div>
+          
 
-          <div className="input-group full-width-field" style={{ marginTop: '8px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <h3 style={{ margin: 0, fontSize: '1rem', color: '#0f172a' }}>🎓 Membres du Jury</h3>
-              <button type="button" className="btn-primary"
-                style={{ fontSize: '0.82rem', padding: '6px 14px' }}
-                onClick={() => setShowNewJuryModal(true)}>
+          <div className="input-group full-width-field jury-section-wrapper">
+            <div className="jury-section-header">
+              <h3 className="jury-section-title">Membres du Jury</h3>
+              <button type="button" className="btn-create-jury" onClick={() => setShowNewJuryModal(true)}>
                 + Créer nouveau jury
               </button>
             </div>
 
             {juryList.length > 0 ? (
-              <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
-                  <thead style={{ background: '#f8fafc' }}>
+              <div className="jury-picker-wrapper">
+                <table className="jury-picker-table">
+                  <thead>
                     <tr>
-                      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Nom</th>
-                      <th style={{ padding: '8px 12px', fontWeight: 600, color: '#475569' }}>Spécialité</th>
-                      <th style={{ padding: '8px 12px', textAlign: 'center', fontWeight: 600, color: '#475569' }}>Ajouter</th>
+                      <th>Nom</th>
+                      <th>Spécialité</th>
+                      <th>Ajouter</th>
                     </tr>
                   </thead>
                   <tbody>
                     {juryList.map(j => (
-                      <tr key={j.id} style={{ borderTop: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '8px 12px', fontWeight: 500 }}>{j.nom}</td>
-                        <td style={{ padding: '8px 12px', color: '#64748b' }}>{j.specialite || "—"}</td>
-                        <td style={{ padding: '8px 12px', textAlign: 'center' }}>
-                       
-                          <button type="button"
-                            onClick={() => handleSelectJury(j)}
-                            style={{
-                              padding: '4px 14px', borderRadius: '6px', border: 'none',
-                              background: '#dbeafe', color: '#1d4ed8',
-                              fontWeight: 600, cursor: 'pointer', fontSize: '0.8rem'
-                            }}>
+                      <tr key={j.id}>
+                        <td className="jury-td-nom">{j.nom}</td>
+                        <td className="jury-td-specialite">{j.specialite || "—"}</td>
+                        <td className="jury-td-action">
+                          <button type="button" className="btn-jury-add" onClick={() => handleSelectJury(j)}>
                             + Ajouter
                           </button>
                         </td>
@@ -235,81 +215,78 @@ export default function Doctorants({ onSuccess }) {
                 </table>
               </div>
             ) : (
-              <p style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
-                Aucun jury disponible. Cliquez sur "Créer nouveau jury".
-              </p>
+              <p className="jury-empty-msg">Aucun jury disponible. Cliquez sur "Créer nouveau jury".</p>
             )}
           </div>
-
           {selectedJury.length > 0 && (
             <div className="input-group full-width-field">
-              <h3 style={{ margin: '0 0 10px', fontSize: '0.95rem', color: '#0f172a' }}>
-                 Jury attribué
-                <span style={{ fontSize: '0.78rem', color: '#94a3b8', marginLeft: '8px', fontWeight: 400 }}>
-                  (le même jury peut avoir plusieurs rôles)
-                </span>
-              </h3>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem', border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
-                <thead style={{ background: '#f1f5f9' }}>
-                  <tr>
-                    <th style={{ padding: '8px 10px', textAlign: 'left' }}>Nom</th>
-                    <th style={{ padding: '8px 10px' }}>Rôle</th>
-                    <th style={{ padding: '8px 10px' }}>Grade</th>
-                    <th style={{ padding: '8px 10px' }}>Établissement</th>
-                    <th style={{ padding: '8px 10px', textAlign: 'center' }}>×</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {selectedJury.map(j => (
-                    <tr key={j.uid} style={{ borderTop: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '6px 10px', fontWeight: 600, color: '#0f172a' }}>{j.nom}</td>
-                      <td style={{ padding: '4px 6px' }}>
-                        <select
-                          value={j.role}
-                          onChange={e => handleJuryChange(j.uid, "role", e.target.value)}
-                          style={{ width: '100%', padding: '5px 8px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.85rem' }}
-                        >
-                          <option value="">-- Rôle --</option>
-                          <option value="Président">Président</option>
-                          <option value="Rapporteur">Rapporteur</option>
-                          <option value="Examinateur">Examinateur</option>
-                          <option value="Co-encadrant">Co-encadrant</option>
-                          <option value="Encadrant">Encadrant</option>
-                          <option value="Membre">Membre</option>
-                        </select>
-                      </td>
-                      <td style={{ padding: '4px 6px' }}>
-                        <select
-                          value={j.grade}
-                          onChange={e => handleJuryChange(j.uid, "grade", e.target.value)}
-                          style={{ width: '100%', padding: '5px 8px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.85rem' }}
-                        >
-                          <option value="">-- Grade --</option>
-                          <option value="Professeur">Professeur</option>
-                          <option value="Professeur Habilité">Professeur Habilité</option>
-                          <option value="Maître de Conférences">Maître de Conférences</option>
-                          <option value="Maître Assistant">Maître Assistant</option>
-                          <option value="Docteur">Docteur</option>
-                        </select>
-                      </td>
-                      <td style={{ padding: '4px 6px' }}>
-                        <input
-                          value={j.local}
-                          placeholder="Ex: FST BM"
-                          onChange={e => handleJuryChange(j.uid, "local", e.target.value)}
-                          style={{ width: '100%', padding: '5px 8px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.85rem' }}
-                        />
-                      </td>
-                      <td style={{ padding: '4px', textAlign: 'center' }}>
-                        <button type="button" onClick={() => handleRemoveJury(j.uid)}
-                          style={{ background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '4px', cursor: 'pointer', padding: '4px 10px', fontWeight: 700 }}>
-                          ✕
-                        </button>
-                      </td>
+              <div className="jury-selected-header">
+                <h3 className="jury-section-title">
+                  Jury attribué
+                   </h3>
+              </div>
+              <div className="jury-selected-wrapper">
+                <table className="jury-selected-table">
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Rôle</th>
+                      <th>Grade</th>
+                      <th>Établissement</th>
+                      <th>×</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {selectedJury.map(j => (
+                      <tr key={j.uid}>
+                        <td className="jury-sel-nom">{j.nom}</td>
+                        <td className="jury-sel-cell">
+                          <select
+                            value={j.role}
+                            onChange={e => handleJuryChange(j.uid, "role", e.target.value)}
+                            className="jury-sel-select"
+                          >
+                            <option value="">-- Rôle --</option>
+                            <option value="Président">Président</option>
+                            <option value="Rapporteur">Rapporteur</option>
+                            <option value="Examinateur">Examinateur</option>
+                            <option value="Co-encadrant">Co-encadrant</option>
+                            <option value="Encadrant">Encadrant</option>
+                            <option value="Membre">Membre</option>
+                          </select>
+                        </td>
+                        <td className="jury-sel-cell">
+                          <select
+                            value={j.grade}
+                            onChange={e => handleJuryChange(j.uid, "grade", e.target.value)}
+                            className="jury-sel-select"
+                          >
+                            <option value="">-- Grade --</option>
+                            <option value="Professeur">Professeur</option>
+                            <option value="Professeur Habilité">Professeur Habilité</option>
+                            <option value="Maître de Conférences">Maître de Conférences</option>
+                            <option value="Maître Assistant">Maître Assistant</option>
+                            <option value="Docteur">Docteur</option>
+                          </select>
+                        </td>
+                        <td className="jury-sel-cell">
+                          <input
+                            value={j.local}
+                            placeholder="Ex: FST BM"
+                            onChange={e => handleJuryChange(j.uid, "local", e.target.value)}
+                            className="jury-sel-input"
+                          />
+                        </td>
+                        <td className="jury-sel-remove">
+                          <button type="button" onClick={() => handleRemoveJury(j.uid)} className="btn-remove-jury">
+                            ✕
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
@@ -324,39 +301,30 @@ export default function Doctorants({ onSuccess }) {
       </div>
 
       {showNewJuryModal && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000
-        }}>
-          <form onSubmit={handleNewJurySubmit} style={{
-            background: '#fff', borderRadius: '12px', padding: '28px',
-            width: '100%', maxWidth: '420px', display: 'flex', flexDirection: 'column', gap: '14px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
-          }}>
-            <h3 style={{ margin: 0, color: '#0f172a', fontSize: '1.1rem' }}>➕ Créer un nouveau jury</h3>
+        <div className="new-jury-overlay" onClick={() => { setShowNewJuryModal(false); setNewJuryForm({ nom: "", specialite: "", local: "" }); }}>
+          <form className="new-jury-modal" onSubmit={handleNewJurySubmit} onClick={e => e.stopPropagation()}>
+            <h3 className="new-jury-title"> Créer un nouveau jury</h3>
             {[
-              { name: 'nom', label: 'Nom complet *', placeholder: 'Ex: Prof. Ahmed Benali', required: true },
-              { name: 'specialite', label: 'Spécialité', placeholder: 'Ex: Informatique' },
-              { name: 'local', label: 'Établissement', placeholder: 'Ex: FST Béni Mellal' },
+              { name: 'nom',       label: 'Nom complet *',  placeholder: 'Ex: Prof. Ahmed Benali', required: true },
+              { name: 'specialite',label: 'Spécialité',     placeholder: 'Ex: Informatique' },
+              { name: 'local',     label: 'Établissement',  placeholder: 'Ex: FST Béni Mellal' },
             ].map(f => (
-              <div key={f.name} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569' }}>{f.label}</label>
+              <div key={f.name} className="new-jury-field">
+                <label className="new-jury-label">{f.label}</label>
                 <input
                   type="text" name={f.name} value={newJuryForm[f.name]}
                   onChange={e => setNewJuryForm(p => ({ ...p, [f.name]: e.target.value }))}
                   placeholder={f.placeholder} required={f.required}
-                  style={{ padding: '9px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem' }}
+                  className="new-jury-input"
                 />
               </div>
             ))}
-            <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
-              <button type="button"
-                onClick={() => { setShowNewJuryModal(false); setNewJuryForm({ nom: "", specialite: "", local: "" }); }}
-                style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer', fontWeight: 600 }}>
+            <div className="new-jury-actions">
+              <button type="button" className="btn-secondary"
+                onClick={() => { setShowNewJuryModal(false); setNewJuryForm({ nom: "", specialite: "", local: "" }); }}>
                 Annuler
               </button>
-              <button type="submit" disabled={addingJury}
-                style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#2563eb', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>
+              <button type="submit" className="btn-primary" disabled={addingJury}>
                 {addingJury ? "..." : "✔ Créer & Sélectionner"}
               </button>
             </div>
