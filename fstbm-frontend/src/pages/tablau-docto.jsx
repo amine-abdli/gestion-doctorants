@@ -175,7 +175,7 @@ export default function TablauDocto() {
                               >
                                 Voir
                               </button>
-                     <button
+                             <button
                                 className="btn-modifier"
                                 onClick={() => handleEdit(doc)}
                                 title="Modifier"

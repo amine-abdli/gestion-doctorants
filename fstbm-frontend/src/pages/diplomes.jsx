@@ -5,6 +5,9 @@ import "./style/style-diplomas.css";
 export default function Diplomas() {
   const [showinputvid, setShowinputvid] = useState(false);
   const [selectedDiploma, setSelectedDiploma] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchCount, setSearchCount] = useState(0);
+
 
   const [diplomas, setDiplomas] = useState([
     {
@@ -49,7 +52,6 @@ export default function Diplomas() {
       local: "FST Settat",
       status: "Actif"
     },
-    // ... plus de données simulées si nécessaire
   ]);
 
   const handlediplomselect = (numero) => {
@@ -95,6 +97,20 @@ export default function Diplomas() {
       <div className="table-card">
         <table className="diplomas-table">
           <thead>
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Rechercher un doctorant..."
+                className="search-input"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchCount > 0 && (
+                <span className="search-results">
+                  {searchCount} résultats trouvés
+                </span>
+              )}
+            </div>
             <tr>
               <th>Numéro</th>
               <th>Nom & Prénom</th>
@@ -146,7 +162,7 @@ export default function Diplomas() {
                         title="Voir / Modifier"
                         onClick={() => handlediplomselect(diploma.numero)}
                       >
-                        👁️
+                        Voir
                       </button>
                       <button
                         className="btn-icon delete"

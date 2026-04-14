@@ -9,12 +9,10 @@ export default function Jury() {
     const [jurySearchTerm, setJurySearchTerm] = useState("");
     const [expandedJury, setExpandedJury] = useState(null);
 
-    // ── Modal Ajouter Jury ──
     const [isAddJuryOpen, setIsAddJuryOpen] = useState(false);
     const [addForm, setAddForm]           = useState({ nom: "", specialite: "", local: "" });
     const [addSubmitting, setAddSubmitting] = useState(false);
 
-    // ── Modal Affecter Doctorant ──
     const [affectModal, setAffectModal]   = useState(null); 
     const [affectSearch, setAffectSearch] = useState("");
     const [affectForm, setAffectForm]     = useState({ doctorant_id: "", role: "", grade: "", local: "" });
@@ -27,7 +25,6 @@ export default function Jury() {
         ]).finally(() => setLoading(false));
     }, []);
 
-    /* ── helpers ── */
     const refreshJuries = () => getJuries().then(r => setJuryList(r.data));
 
     const filteredJury = juryList.filter(item =>
@@ -36,7 +33,6 @@ export default function Jury() {
         (item.local || "").toLowerCase().includes(jurySearchTerm.toLowerCase())
     );
 
-    /* ══ Ajouter un jury ══ */
     const handleAddSubmit = async (e) => {
         e.preventDefault();
         if (!addForm.nom.trim()) { alert("Le nom est obligatoire."); return; }
@@ -53,7 +49,6 @@ export default function Jury() {
         }
     };
 
-    /* ══ Supprimer un jury ══ */
     const handleDelete = async (id) => {
         if (!window.confirm("Supprimer ce membre du jury ?")) return;
         try {
@@ -63,19 +58,16 @@ export default function Jury() {
         } catch { alert("Erreur lors de la suppression."); }
     };
 
-    /* ══ Ouvrir modal affectation ══ */
     const openAffectModal = (jury) => {
         setAffectModal(jury);
         setAffectSearch("");
         setAffectForm({ doctorant_id: "", role: "", grade: "", local: jury.local || "" });
     };
 
-    /* ══ Sélectionner un doctorant dans le modal ══ */
     const handleSelectDoctorant = (doc) => {
         setAffectForm(f => ({ ...f, doctorant_id: doc.id }));
     };
 
-    /* ══ Soumettre l'affectation ══ */
     const handleAffectSubmit = async (e) => {
         e.preventDefault();
         if (!affectForm.doctorant_id) { alert("Veuillez sélectionner un doctorant."); return; }
@@ -92,7 +84,6 @@ export default function Jury() {
         }
     };
 
-    /* ── Doctorants filtrés dans le modal ── */
     const filteredDoctorantsForAffect = doctorantsList.filter(d => {
         const s = affectSearch.toLowerCase();
         return (d.nomfr || "").toLowerCase().includes(s) ||
@@ -105,7 +96,6 @@ export default function Jury() {
     return (
         <div className="jury-page-container">
 
-            {/* ── Header ── */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', gap: '16px' }}>
                 <button className="btn-primary" onClick={() => setIsAddJuryOpen(true)}>
                     + Ajouter un membre
@@ -119,7 +109,6 @@ export default function Jury() {
                 />
             </div>
 
-            {/* ════ Modal Ajouter Jury ════ */}
             {isAddJuryOpen && (
                 <div className="modal-overlay">
                     <form className="modal-content jury" onSubmit={handleAddSubmit}>
@@ -147,7 +136,6 @@ export default function Jury() {
                 </div>
             )}
 
-            {/* ════ Modal Affecter Doctorant à un Jury ════ */}
             {affectModal && (
                 <div className="modal-overlay" onClick={() => setAffectModal(null)}>
                     <div
@@ -160,7 +148,7 @@ export default function Jury() {
                     >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                             <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#0f172a' }}>
-                                🎓 Affecter un doctorant à <br />
+                                Affecter un doctorant à <br />
                                 <span style={{ color: '#2563eb' }}>{affectModal.nom}</span>
                             </h3>
                             <button onClick={() => setAffectModal(null)}
@@ -169,19 +157,17 @@ export default function Jury() {
 
                         <form onSubmit={handleAffectSubmit}>
 
-                            {/* ── Chercher doctorant ── */}
                             <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '6px' }}>
                                 Sélectionner un doctorant
                             </label>
                             <input
                                 type="text"
-                                placeholder="🔍 Nom, N° inscription..."
+                                placeholder=" Nom, N° inscription..."
                                 value={affectSearch}
                                 onChange={e => setAffectSearch(e.target.value)}
                                 style={{ width: '100%', padding: '9px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '8px', boxSizing: 'border-box' }}
                             />
 
-                            {/* ── Liste doctorants ── */}
                             <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', maxHeight: '180px', overflowY: 'auto', marginBottom: '16px' }}>
                                 {filteredDoctorantsForAffect.length > 0 ? filteredDoctorantsForAffect.map(doc => (
                                     <div key={doc.id}
@@ -219,7 +205,6 @@ export default function Jury() {
                                 </div>
                             )}
 
-                            {/* ── Rôle ── */}
                             <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>
                                 Rôle dans le jury *
                             </label>
@@ -234,10 +219,11 @@ export default function Jury() {
                                 <option value="Examinateur">Examinateur</option>
                                 <option value="Co-encadrant">Co-encadrant</option>
                                 <option value="Encadrant">Encadrant</option>
+                                <option value="Directeur de these">Directeur de these </option>
+                                <option value="Co-Directeur de these">Co-Directeur de these</option>
                                 <option value="Membre">Membre</option>
                             </select>
 
-                            {/* ── Grade ── */}
                             <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>
                                 Grade
                             </label>
@@ -251,10 +237,11 @@ export default function Jury() {
                                 <option value="Professeur Habilité">Professeur Habilité</option>
                                 <option value="Maître de Conférences">Maître de Conférences</option>
                                 <option value="Maître Assistant">Maître Assistant</option>
-                                <option value="Docteur">Docteur</option>
+                                <option value="Maitre de conferences">Maitre de conferences</option>
+                                <option value="Maitre de conferences Habilité">Maitre de conferences Habilité</option>
+                                <option value="Professeur de l'enseignement superieur">Professeur de l'enseignement superieur</option>
                             </select>
 
-                            {/* ── Établissement ── */}
                             <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>
                                 Établissement
                             </label>
@@ -266,7 +253,6 @@ export default function Jury() {
                                 style={{ width: '100%', padding: '9px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '20px', boxSizing: 'border-box' }}
                             />
 
-                            {/* ── Actions ── */}
                             <div style={{ display: 'flex', gap: '10px' }}>
                                 <button type="button" onClick={() => setAffectModal(null)}
                                     style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc', color: '#475569', fontWeight: 600, cursor: 'pointer' }}>

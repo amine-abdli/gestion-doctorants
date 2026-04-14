@@ -246,13 +246,15 @@ export default function Doctorants({ onSuccess }) {
                             onChange={e => handleJuryChange(j.uid, "role", e.target.value)}
                             className="jury-sel-select"
                           >
-                            <option value="">-- Rôle --</option>
-                            <option value="Président">Président</option>
-                            <option value="Rapporteur">Rapporteur</option>
-                            <option value="Examinateur">Examinateur</option>
-                            <option value="Co-encadrant">Co-encadrant</option>
-                            <option value="Encadrant">Encadrant</option>
-                            <option value="Membre">Membre</option>
+                           <option value="">-- Sélectionner le rôle --</option>
+                                <option value="Président">Président</option>
+                                <option value="Rapporteur">Rapporteur</option>
+                                <option value="Examinateur">Examinateur</option>
+                                <option value="Co-encadrant">Co-encadrant</option>
+                                <option value="Encadrant">Encadrant</option>
+                                <option value="Directeur de these">Directeur de these </option>
+                                <option value="Co-Directeur de these">Co-Directeur de these</option>
+                                <option value="Membre">Membre</option>
                           </select>
                         </td>
                         <td className="jury-sel-cell">
@@ -261,13 +263,16 @@ export default function Doctorants({ onSuccess }) {
                             onChange={e => handleJuryChange(j.uid, "grade", e.target.value)}
                             className="jury-sel-select"
                           >
-                            <option value="">-- Grade --</option>
-                            <option value="Professeur">Professeur</option>
-                            <option value="Professeur Habilité">Professeur Habilité</option>
-                            <option value="Maître de Conférences">Maître de Conférences</option>
-                            <option value="Maître Assistant">Maître Assistant</option>
-                            <option value="Docteur">Docteur</option>
-                          </select>
+                              <option value="">-- Sélectionner le grade --</option>
+                                <option value="Professeur">Professeur</option>
+                                <option value="Professeur Habilité">Professeur Habilité</option>
+                                <option value="Maître de Conférences">Maître de Conférences</option>
+                                <option value="Maître Assistant">Maître Assistant</option>
+                                <option value="Maitre de conferences">Maitre de conferences</option>
+                                <option value="Maitre de conferences Habilité">Maitre de conferences Habilité</option>
+                                <option value="Professeur de l'enseignement superieur">Professeur de l'enseignement superieur</option>
+                            </select>
+
                         </td>
                         <td className="jury-sel-cell">
                           <input
