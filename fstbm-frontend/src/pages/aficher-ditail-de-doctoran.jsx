@@ -1,4 +1,4 @@
-import React from "react";
+
 import "./style/aficher-ditail-de-doctoran.css";
 
 export default function AficherDitailDeDoctoran({ doctorant, onClose }) {
@@ -6,19 +6,18 @@ export default function AficherDitailDeDoctoran({ doctorant, onClose }) {
 
   const fields = [
     { label: "N° Inscription",     value: doctorant.nmb_inscription },
-    { label: "Numéro",             value: doctorant.numero },
+   
     { label: "Nom (FR)",           value: doctorant.nomfr },
     { label: "الإسم",              value: doctorant.nomarb,         dir: "rtl" },
     { label: "CIN",                value: doctorant.cin },
     { label: "Date de naissance",  value: doctorant.date_naissance },
     { label: "مكان الإزدياد",      value: doctorant.lieu_naissance_arb, dir: "rtl" },
     { label: "Discipline",         value: doctorant.discipline_fr },
+    { label: "المادة",            value: doctorant.discipline_arb, dir: "rtl" },
     { label: "Spécialité",         value: doctorant.specialite_fr },
-    { label: "Sujet de thèse",     value: doctorant.sujet_fr },
-    { label: "Mention",            value: doctorant.mention_fr },
-    { label: "Statut",             value: doctorant.status },
-    { label: "Date soutenance",    value: doctorant.date_descution_jury },
-    { label: "Date diplôme",       value: doctorant.date_obtinu_diplome },
+    { label: "التخصص",            value: doctorant.specialite_arb, dir: "rtl" },
+    { label: "Sujet de thèse",     value: doctorant.sujet_fr }
+  
   ];
 
 

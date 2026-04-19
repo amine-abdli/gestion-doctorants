@@ -8,8 +8,7 @@ function getCompletionStatus(doc) {
     'nmb_inscription', 'nomfr', 'nomarb', 'cin',
     'date_naissance', 'lieu_naissance_arb',
     'discipline_fr', 'specialite_fr',
-    'sujet_fr', 'mention_fr',
-    'date_descution_jury', 'date_obtinu_diplome', 'status'
+    'sujet_fr'
   ];
   for (const field of requiredFields) {
     if (!doc[field] || String(doc[field]).trim() === '') return 'attente';

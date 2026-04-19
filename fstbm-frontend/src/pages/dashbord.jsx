@@ -27,7 +27,7 @@ export default function Dashbord() {
                         </div>
                         <div className="action-card-text">
                             <span className="action-label">NOUVELLE INSCRIPTION</span> <br />
-                            <span className="action-title">AJOUTER Étudiant</span>
+                            <span className="action-title">AJOUTER Doctorant</span>
                         </div>
                         <svg className="action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M5 12h14M12 5l7 7-7 7" />

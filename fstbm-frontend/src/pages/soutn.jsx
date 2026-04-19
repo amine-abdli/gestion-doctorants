@@ -1,37 +1,58 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import API from '../services/api';
 import "./style/sautn.css";
 
-const initialData = [
-  { id: 1, nom: "amine1", prenom: "amine1", date: "2022-01-01", local: "local1", heure: "10:00" },
-  { id: 2, nom: "amine2", prenom: "amine2", date: "2022-01-01", local: "local1", heure: "10:00" },
-  { id: 3, nom: "amine3", prenom: "amine3", date: "2022-01-01", local: "local1", heure: "10:00" },
-];
-
 export default function Soutn() {
-  const [rows, setRows] = useState(initialData);
+  const [doctorants, setDoctorants] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [form, setForm] = useState({ nom: "", prenom: "", date: "", local: "", heure: "" });
   const [showForm, setShowForm] = useState(false);
 
+  useEffect(() => {
+    fetchDoctorants();
+  }, []);
+
+  const fetchDoctorants = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get("/doctorants");
+      setDoctorants(res.data);
+    } catch (err) {
+      console.error("Erreur lors du chargement des doctorants:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rows = doctorants.filter(d => d.date_descution_jury);
+
   const filtered = rows.filter(r =>
-    r.nom.toLowerCase().includes(search.toLowerCase()) ||
-    r.prenom.toLowerCase().includes(search.toLowerCase())
+    (r.nomfr || "").toLowerCase().includes(search.toLowerCase()) ||
+    (r.nomarb || "").toLowerCase().includes(search.toLowerCase()) ||
+    (r.nmb_inscription || "").toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleAdd = () => {
-    setRows(prev => [...prev, { id: prev.length > 0 ? Math.max(...prev.map(r => r.id)) + 1 : 1, ...form }]);
+  const handleDelete = async (id) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer la date de soutenance de ce doctorant ?")) return;
+    try {
+      await API.put(`/doctorants/${id}`, { date_descution_jury: null });
+      fetchDoctorants();
+    } catch (err) {
+      alert("Erreur lors du retrait de la soutenance.");
+    }
   };
 
-  const handleReset = () => {
-    setForm({ nom: "", prenom: "", date: "", local: "", heure: "" });
-    setShowForm(false);
+  const handlePrintFiche = (doc) => {
+    alert(`Impression de la fiche de soutenance pour ${doc.nomfr || 'Doctorant'}.\n(Fonctionnalité en attente de génération PDF backend)`);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.nom || !form.prenom || !form.date || !form.local || !form.heure) return;
-    handleAdd();
-    handleReset();
+    // Normalement on choisirait un doctorant et on mettrait à jour sa date
+    // Pour l'instant on garde la structure simplifiée mais avec un message
+    alert("Veuillez utiliser la page Gestion Doctorants pour planifier une soutenance.");
+    setShowForm(false);
   };
 
   return (
@@ -68,34 +89,35 @@ export default function Soutn() {
             </tr>
           </thead>
           <tbody>
-            {filtered.length > 0 ? (
+            {loading ? (
+              <tr><td colSpan="7" style={{ textAlign: "center", padding: "40px" }}>Chargement...</td></tr>
+            ) : filtered.length > 0 ? (
               filtered.map(item => (
                 <tr key={item.id}>
-                 
-                  <td style={{fontWeight: 600, color: '#0f172a'}}>{item.nom.toUpperCase()}</td>
-                  <td>{item.prenom}</td>
+                  <td style={{fontWeight: 600, color: '#0f172a'}}>{(item.nomfr || "—").toUpperCase()}</td>
+                  <td>{item.nomarb || "—"}</td>
                   <td>
                     <span style={{color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px'}}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                      {item.date}
+                      {item.date_descution_jury}
                     </span>
                   </td>
                   <td>
                     <span style={{backgroundColor: '#f1f5f9', padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 500}}>
-                      {item.local}
+                      {item.juries?.[0]?.pivot?.local || "FST BM"}
                     </span>
                   </td>
                   <td>
-                    <span style={{backgroundColor: '#111213ff', padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 500}}>
-                      {item.heure}
+                    <span style={{backgroundColor: '#111213ff', color: 'white', padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 500}}>
+                      10:00
                     </span>
                   </td>
                   <td>
-                    <button className="btn-action btn-edit" title="Modifier">Modifier</button> 
-                    <button className="btn-action btn-delete" title="Supprimer" onClick={() => setRows(rows.filter(r => r.id !== item.id))}>Supprimer</button>
+                    <button className="btn-action btn-edit" title="Modifier" onClick={() => alert("Modification via la fiche doctorant")}>Modifier</button> 
+                    <button className="btn-action btn-delete" title="Supprimer" onClick={() => handleDelete(item.id)}>Supprimer</button>
                   </td>
                   <td>
-                    <button className="btn-action btn-print" style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+                    <button className="btn-action btn-print" onClick={() => handlePrintFiche(item)} style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                       Imprimer fiche
                     </button>

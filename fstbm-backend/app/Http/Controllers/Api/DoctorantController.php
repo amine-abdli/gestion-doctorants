@@ -11,7 +11,7 @@ class DoctorantController extends Controller
     // ================= INDEX =================
     public function index()
     {
-        return response()->json(Doctorant::with('juries')->get());
+        return response()->json(Doctorant::with('juries', 'diplomes')->get());
     }
 
     // ================= STORE =================
@@ -60,7 +60,7 @@ class DoctorantController extends Controller
                 }
             }
 
-            return response()->json($doctorant->load('juries'), 201);
+            return response()->json($doctorant->load('juries', 'diplomes'), 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -75,7 +75,7 @@ class DoctorantController extends Controller
     // ================= SHOW =================
     public function show($id)
     {
-        $doctorant = Doctorant::with('juries')->findOrFail($id);
+        $doctorant = Doctorant::with('juries', 'diplomes')->findOrFail($id);
         return response()->json($doctorant);
     }
 
@@ -86,7 +86,7 @@ class DoctorantController extends Controller
             $doctorant = Doctorant::findOrFail($id);
 
             $validated = $request->validate([
-                'numero'              => 'nullable|string',
+            
                 'nmb_inscription'     => 'sometimes|required|string|unique:doctorants,nmb_inscription,' . $id,
                 'nomfr'               => 'nullable|string',
                 'nomarb'              => 'nullable|string',
@@ -98,9 +98,7 @@ class DoctorantController extends Controller
                 'specialite_fr'       => 'nullable|string',
                 'specialite_arb'      => 'nullable|string',
                 'sujet_fr'            => 'nullable|string',
-                'mention_fr'          => 'nullable|string',
-                'mention_arb'         => 'nullable|string',
-                'date_descution_jury' => 'nullable|date',
+                
                 'date_obtinu_diplome' => 'nullable|date',
                 'status'              => 'nullable|string',
 
@@ -128,7 +126,7 @@ class DoctorantController extends Controller
                 }
             }
 
-            return response()->json($doctorant->load('juries'));
+            return response()->json($doctorant->load('juries', 'diplomes'));
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([

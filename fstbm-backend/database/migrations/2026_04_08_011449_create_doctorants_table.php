@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::dropIfExists('doctorants');
         Schema::create('doctorants', function (Blueprint $table) {
             $table->id();
-            $table->string('numero')->nullable();
+      
             $table->string('nmb_inscription')->unique();
             $table->string('nomfr')->nullable();
             $table->string('nomarb')->nullable();
@@ -26,10 +26,7 @@ return new class extends Migration
             $table->string('specialite_fr')->nullable();
             $table->string('specialite_arb')->nullable();
             $table->string('sujet_fr')->nullable();
-            $table->string('mention_fr')->nullable();
-            $table->string('mention_arb')->nullable();
-            $table->date('date_descution_jury')->nullable();
-            $table->date('date_obtinu_diplome')->nullable();
+      
             $table->string('status')->nullable();
             $table->timestamps();
         });

@@ -1,9 +1,28 @@
-/* ===== Overlay ===== */
+/* ===== Modal Form - Professional & Simple Design ===== */
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #eff6ff;
+  --success: #10b981;
+  --success-light: #ecfdf5;
+  --danger: #ef4444;
+  --danger-light: #fef2f2;
+  --text-dark: #1f2937;
+  --text-gray: #6b7280;
+  --text-light: #9ca3b8;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --bg-light: #f9fafb;
+  --white: #ffffff;
+}
+
+/* Overlay */
 .doctorants-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.7); /* Sleeker dark slate overlay */
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,91 +36,100 @@
   to { opacity: 1; }
 }
 
-/* ===== Modal container ===== */
+/* Modal Container */
 .doctorants-modal {
-  background: #ffffff;
-  border-radius: 20px; /* More rounded for premium feel */
+  background: var(--white);
+  border-radius: 16px;
   width: 100%;
-  max-width: 760px; /* Slightly narrower */
-  max-height: 85vh; /* A bit more breathing room top/bottom */
+  max-width: 900px;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
-@keyframes modalSlideUp {
-  from { opacity: 0; transform: translateY(30px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px) scale(0.95);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
 }
 
-/* ===== Header fix ===== */
+/* Header */
 .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 32px;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
-  background: #fff;
+  background: linear-gradient(135deg, var(--white) 0%, var(--bg-light) 100%);
 }
 
 .modal-header h2 {
-  font-size: 20px;
-  font-weight: 800;
-  color: #0f172a;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.5px;
 }
 
-/* ===== Close Button ===== */
+/* Close Button */
 .btn-close {
-  background: #f1f5f9;
+  background: var(--border-light);
   border: none;
-  font-size: 16px;
+  font-size: 20px;
   cursor: pointer;
-  color: #64748b;
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
+  color: var(--text-gray);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s;
 }
 
 .btn-close:hover {
-  background: #fee2e2;
-  color: #ef4444;
+  background: var(--danger-light);
+  color: var(--danger);
   transform: rotate(90deg);
 }
 
-/* ===== Scrollable Body ===== */
+/* Body - Scrollable */
 .modal-body {
   overflow-y: auto;
   padding: 32px;
   flex: 1;
-  background: #fff;
+  background: var(--white);
 }
 
-/* Elegant Scrollbar */
+/* Custom Scrollbar */
 .modal-body::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
+
 .modal-body::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .modal-body::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: var(--border);
   border-radius: 10px;
 }
+
 .modal-body::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  background: var(--text-gray);
 }
 
-/* ===== Form Grid ===== */
+/* Form Grid */
 .doctorants-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -117,30 +145,45 @@
 .input-group label {
   font-size: 13px;
   font-weight: 700;
-  color: #475569;
+  color: var(--text-gray);
   text-transform: uppercase;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.05em;
 }
 
-.input-group input {
-  padding: 12px 16px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
+/* Input & Select Styling */
+.input-group input,
+.input-group select {
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
   font-size: 14px;
-  color: #1e293b;
-  background: #f8fafc;
+  color: var(--text-dark);
+  background: var(--white);
   transition: all 0.2s ease;
   outline: none;
+  font-family: inherit;
 }
 
-.input-group input:focus {
-  border-color: #3b82f6;
-  background: #fff;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+.input-group input::placeholder,
+.input-group select:invalid {
+  color: var(--text-light);
 }
 
-.input-group input::placeholder {
-  color: #94a3b8;
+.input-group input:focus,
+.input-group select:focus {
+  border-color: var(--primary);
+  background: var(--white);
+  box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.input-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+  padding-right: 36px;
 }
 
 /* Full Width Fields */
@@ -148,42 +191,252 @@
   grid-column: 1 / -1;
 }
 
-/* ===== Actions Footer ===== */
+.input-group h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.input-group h4 {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* Jury List Section */
+.jury-list-container {
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--white);
+  margin-bottom: 16px;
+}
+
+.jury-list-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.jury-list-table thead {
+  background: linear-gradient(135deg, var(--bg-light) 0%, var(--border-light) 100%);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.jury-list-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.jury-list-table td {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.jury-list-table tbody tr:hover {
+  background: var(--bg-light);
+}
+
+.btn-add-jury {
+  padding: 8px 16px;
+  background: var(--success);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-add-jury:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* Jury Assigned Section */
+.jury-assigned {
+  background: linear-gradient(135deg, var(--success-light) 0%, #f0fdf4 100%);
+  border: 2px solid #a7f3d0;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.jury-assigned h4 {
+  margin: 0 0 20px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.jury-table-container {
+  overflow-x: auto;
+  border-radius: 10px;
+  background: var(--white);
+  border: 1px solid var(--border);
+}
+
+.jury-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.jury-table thead {
+  background: linear-gradient(135deg, var(--bg-light) 0%, var(--border-light) 100%);
+  border-bottom: 2px solid var(--border);
+}
+
+.jury-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.jury-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 14px;
+}
+
+.jury-table tbody tr:hover {
+  background: var(--bg-light);
+}
+
+.jury-nom {
+  font-weight: 600;
+  color: var(--text-dark);
+  width: 140px;
+}
+
+.jury-field {
+  width: 140px;
+}
+
+.jury-action {
+  width: 130px;
+  text-align: center;
+}
+
+.jury-select {
+  width: 100%;
+  padding: 10px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-dark);
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 16px;
+  padding-right: 28px;
+}
+
+.jury-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  outline: none;
+}
+
+.jury-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-dark);
+  background: var(--white);
+  transition: all 0.2s;
+}
+
+.jury-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  outline: none;
+}
+
+.btn-remove-jury {
+  padding: 8px 12px;
+  background: var(--danger);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-remove-jury:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* Actions Footer */
 .doctorants-actions {
   grid-column: 1 / -1;
   display: flex;
   justify-content: flex-end;
   gap: 16px;
-  margin-top: 16px;
+  margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1.5px solid var(--border);
 }
 
 .btn-primary {
-  padding: 12px 28px;
-  background: #2563eb;
-  color: #fff;
+  padding: 12px 32px;
+  background: var(--primary);
+  color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
-.btn-primary:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
-  padding: 12px 28px;
-  background: #fff;
-  color: #475569;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
+  padding: 12px 32px;
+  background: var(--white);
+  color: var(--text-gray);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -191,28 +444,100 @@
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  color: #1e293b;
+  background: var(--bg-light);
+  border-color: var(--text-gray);
+  color: var(--text-dark);
+  transform: translateY(-2px);
 }
 
-/* ===== Mobile Adjustments ===== */
-@media (max-width: 640px) {
+/* Messages d'alerte */
+.message-alert {
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 14px 16px;
+  border-left: 4px solid;
+  animation: slideInDown 0.3s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-success {
+  background: var(--success-light);
+  color: #065f46;
+  border-left-color: var(--success);
+}
+
+.message-error {
+  background: var(--danger-light);
+  color: #7f1d1d;
+  border-left-color: var(--danger);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Info Section */
+@media (max-width: 960px) {
   .doctorants-form {
     grid-template-columns: 1fr;
-    gap: 16px;
   }
 
+  .jury-field {
+    width: auto;
+  }
+
+  .jury-nom {
+    width: auto;
+  }
+
+  .jury-action {
+    width: auto;
+  }
+}
+
+@media (max-width: 640px) {
   .doctorants-modal {
-    max-height: 90vh;
-    border-radius: 16px;
+    max-width: 95vw;
+    max-height: 95vh;
+    border-radius: 12px;
   }
 
   .modal-header {
-    padding: 20px;
+    padding: 20px 24px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
   }
 
   .modal-body {
-    padding: 20px;
+    padding: 20px 24px;
+  }
+
+  .doctorants-form {
+    gap: 16px;
+  }
+
+  .doctorants-actions {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+
+  .jury-table-container {
+    overflow-x: scroll;
   }
 }

@@ -5,7 +5,7 @@ import "./style/doctorants.css";
 export default function Doctorants({ onSuccess }) {
 
   const initialForm = {
-    numero: "",
+
     nmb_inscription: "",
     nomfr: "",
     nomarb: "",
@@ -17,21 +17,18 @@ export default function Doctorants({ onSuccess }) {
     specialite_fr: "",
     specialite_arb: "",
     sujet_fr: "",
-    mention_fr: "",
-    mention_arb: "",
-    date_descution_jury: "",
-    date_obtinu_diplome: "",
     status: "",
   };
 
-  const [formData, setFormData]         = useState(initialForm);
-  const [juryList, setJuryList]         = useState([]);
+  const [formData, setFormData] = useState(initialForm);
+  const [juryList, setJuryList] = useState([]);
   const [selectedJury, setSelectedJury] = useState([]);
-  const [submitting, setSubmitting]     = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [nom_modifier, setnommodifier] = useState([]);//hadi ghadi nmodifie biha les nom de jury 
 
   const [showNewJuryModal, setShowNewJuryModal] = useState(false);
-  const [newJuryForm, setNewJuryForm]           = useState({ nom: "", specialite: "", local: "" });
-  const [addingJury, setAddingJury]             = useState(false);
+  const [newJuryForm, setNewJuryForm] = useState({ nom: "", specialite: "", local: "" });
+  const [addingJury, setAddingJury] = useState(false);
 
   useEffect(() => { loadJuries(); }, []);
 
@@ -49,6 +46,7 @@ export default function Doctorants({ onSuccess }) {
       grade: "",
       local: jury.local || ""
     }]);
+    console.log(jury);//// manhna ghadi njibo les nom de jury
   };
 
   const handleJuryChange = (uid, field, value) => {
@@ -71,10 +69,12 @@ export default function Doctorants({ onSuccess }) {
         uid: `${created.id}-${Date.now()}`,
         id: created.id,
         nom: created.nom,
+        nom_modifier: "",
         role: "",
         grade: "",
         local: created.local || ""
       }]);
+
       setNewJuryForm({ nom: "", specialite: "", local: "" });
       setShowNewJuryModal(false);
     } catch (err) {
@@ -114,11 +114,6 @@ export default function Doctorants({ onSuccess }) {
         <h2 className="form-card-title">Inscription d'un Doctorant</h2>
 
         <form className="doctorants-form" onSubmit={handleSubmit}>
-
-          <div className="input-group">
-            <label htmlFor="numero">Numéro</label>
-            <input type="text" name="numero" id="numero" value={formData.numero} onChange={handleChange} />
-          </div>
           <div className="input-group">
             <label htmlFor="nmb_inscription">N° Inscription *</label>
             <input type="text" name="nmb_inscription" id="nmb_inscription" value={formData.nmb_inscription} onChange={handleChange} required />
@@ -163,24 +158,6 @@ export default function Doctorants({ onSuccess }) {
             <label htmlFor="sujet_fr">Sujet de thèse</label>
             <input type="text" name="sujet_fr" id="sujet_fr" value={formData.sujet_fr} onChange={handleChange} />
           </div>
-          <div className="input-group">
-            <label htmlFor="mention_fr">Mention</label>
-            <input type="text" name="mention_fr" id="mention_fr" value={formData.mention_fr} onChange={handleChange} />
-          </div>
-          <div className="input-group">
-            <label htmlFor="mention_arb">ميزة</label>
-            <input type="text" name="mention_arb" id="mention_arb" value={formData.mention_arb} onChange={handleChange} dir="rtl" />
-          </div>
-          <div className="input-group">
-            <label htmlFor="date_descution_jury">Date de soutenance</label>
-            <input type="date" name="date_descution_jury" id="date_descution_jury" value={formData.date_descution_jury} onChange={handleChange} />
-          </div>
-          <div className="input-group">
-            <label htmlFor="date_obtinu_diplome">Date d'obtention diplôme</label>
-            <input type="date" name="date_obtinu_diplome" id="date_obtinu_diplome" value={formData.date_obtinu_diplome} onChange={handleChange} />
-          </div>
-          
-
           <div className="input-group full-width-field jury-section-wrapper">
             <div className="jury-section-header">
               <h3 className="jury-section-title">Membres du Jury</h3>
@@ -223,13 +200,14 @@ export default function Doctorants({ onSuccess }) {
               <div className="jury-selected-header">
                 <h3 className="jury-section-title">
                   Jury attribué
-                   </h3>
+                </h3>
               </div>
               <div className="jury-selected-wrapper">
                 <table className="jury-selected-table">
                   <thead>
                     <tr>
                       <th>Nom</th>
+                      <th>nom modifier</th>
                       <th>Rôle</th>
                       <th>Grade</th>
                       <th>Établissement</th>
@@ -237,24 +215,26 @@ export default function Doctorants({ onSuccess }) {
                     </tr>
                   </thead>
                   <tbody>
+
                     {selectedJury.map(j => (
                       <tr key={j.uid}>
                         <td className="jury-sel-nom">{j.nom}</td>
+                        <td className="jury-sel-nom">{j.nom_modifier}</td>
                         <td className="jury-sel-cell">
                           <select
                             value={j.role}
                             onChange={e => handleJuryChange(j.uid, "role", e.target.value)}
                             className="jury-sel-select"
                           >
-                           <option value="">-- Sélectionner le rôle --</option>
-                                <option value="Président">Président</option>
-                                <option value="Rapporteur">Rapporteur</option>
-                                <option value="Examinateur">Examinateur</option>
-                                <option value="Co-encadrant">Co-encadrant</option>
-                                <option value="Encadrant">Encadrant</option>
-                                <option value="Directeur de these">Directeur de these </option>
-                                <option value="Co-Directeur de these">Co-Directeur de these</option>
-                                <option value="Membre">Membre</option>
+                            <option value="">-- Sélectionner le rôle --</option>
+                            <option value="Président">Président</option>
+                            <option value="Rapporteur">Rapporteur</option>
+                            <option value="Examinateur">Examinateur</option>
+                            <option value="Co-encadrant">Co-encadrant</option>
+                            <option value="Encadrant">Encadrant</option>
+                            <option value="Directeur de these">Directeur de these </option>
+                            <option value="Co-Directeur de these">Co-Directeur de these</option>
+                            <option value="Membre">Membre</option>
                           </select>
                         </td>
                         <td className="jury-sel-cell">
@@ -263,15 +243,15 @@ export default function Doctorants({ onSuccess }) {
                             onChange={e => handleJuryChange(j.uid, "grade", e.target.value)}
                             className="jury-sel-select"
                           >
-                              <option value="">-- Sélectionner le grade --</option>
-                                <option value="Professeur">Professeur</option>
-                                <option value="Professeur Habilité">Professeur Habilité</option>
-                                <option value="Maître de Conférences">Maître de Conférences</option>
-                                <option value="Maître Assistant">Maître Assistant</option>
-                                <option value="Maitre de conferences">Maitre de conferences</option>
-                                <option value="Maitre de conferences Habilité">Maitre de conferences Habilité</option>
-                                <option value="Professeur de l'enseignement superieur">Professeur de l'enseignement superieur</option>
-                            </select>
+                            <option value="">-- Sélectionner le grade --</option>
+                            <option value="Professeur">Professeur</option>
+                            <option value="Professeur Habilité">Professeur Habilité</option>
+                            <option value="Maître de Conférences">Maître de Conférences</option>
+                            <option value="Maître Assistant">Maître Assistant</option>
+                            <option value="Maitre de conferences">Maitre de conferences</option>
+                            <option value="Maitre de conferences Habilité">Maitre de  Habilité</option>
+                            <option value="Professeur de l'enseignement superieur">Professeur de l'enseignement superieur</option>
+                          </select>
 
                         </td>
                         <td className="jury-sel-cell">
@@ -310,9 +290,9 @@ export default function Doctorants({ onSuccess }) {
           <form className="new-jury-modal" onSubmit={handleNewJurySubmit} onClick={e => e.stopPropagation()}>
             <h3 className="new-jury-title"> Créer un nouveau jury</h3>
             {[
-              { name: 'nom',       label: 'Nom complet *',  placeholder: 'Ex: Prof. Ahmed Benali', required: true },
-              { name: 'specialite',label: 'Spécialité',     placeholder: 'Ex: Informatique' },
-              { name: 'local',     label: 'Établissement',  placeholder: 'Ex: FST Béni Mellal' },
+              { name: 'nom', label: 'Nom complet *', placeholder: 'Ex: Prof. Ahmed Benali', required: true },
+              { name: 'specialite', label: 'Spécialité', placeholder: 'Ex: Informatique' },
+              { name: 'local', label: 'Établissement', placeholder: 'Ex: FST Béni Mellal' },
             ].map(f => (
               <div key={f.name} className="new-jury-field">
                 <label className="new-jury-label">{f.label}</label>

@@ -1,0 +1,423 @@
+/* ===== Select Doctorant Modal - Professional Design ===== */
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #eff6ff;
+  --success: #10b981;
+  --text-dark: #1f2937;
+  --text-gray: #6b7280;
+  --text-light: #9ca3b8;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --bg-light: #f9fafb;
+  --white: #ffffff;
+}
+
+/* Overlay */
+.select-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Container */
+.select-modal {
+  background: var(--white);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px) scale(0.95);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.select-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--white) 0%, var(--bg-light) 100%);
+}
+
+.select-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+/* Close Button */
+.btn-close-select {
+  background: var(--border-light);
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-gray);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-close-select:hover {
+  background: #fef2f2;
+  color: #ef4444;
+  transform: rotate(90deg);
+}
+
+/* Body */
+.select-body {
+  overflow-y: auto;
+  padding: 24px;
+  flex: 1;
+  background: var(--white);
+}
+
+.select-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.select-body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+.select-body::-webkit-scrollbar-thumb:hover {
+  background: var(--text-gray);
+}
+
+/* Search Bar */
+.search-bar-select {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.search-input-select {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-dark);
+  background: var(--white);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.search-input-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-light);
+  background: var(--white);
+}
+
+.search-input-select::placeholder {
+  color: var(--text-light);
+}
+
+.search-count {
+  font-size: 13px;
+  color: var(--text-gray);
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0 12px;
+}
+
+/* Doctorants List */
+.doctorants-list {
+  display: grid;
+  gap: 16px;
+}
+
+.doctorant-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  background: var(--bg-light);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.doctorant-card:hover {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, var(--white), var(--bg-light));
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+.doctorant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.doctorant-name {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name-fr {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.name-ar {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-gray);
+  direction: rtl;
+  text-align: right;
+}
+
+.doctorant-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dark);
+  word-break: break-word;
+}
+
+/* Button Select */
+.btn-select-doctorant {
+  padding: 10px 20px;
+  background: var(--success);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.btn-select-doctorant:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+/* Doctorants Table */
+.doctorants-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.doctorants-table thead {
+  background: linear-gradient(135deg, var(--bg-light) 0%, #f3f4f6 100%);
+  border-bottom: 2px solid var(--border);
+}
+
+.doctorants-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.doctorants-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+.doctorants-table tbody tr {
+  transition: all 0.2s;
+  background: var(--white);
+}
+
+.doctorants-table tbody tr:hover {
+  background: var(--bg-light);
+}
+
+.doctorants-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: var(--text-gray);
+  margin: 0;
+}
+
+.text-muted {
+  font-size: 13px !important;
+  color: var(--text-light) !important;
+  margin-top: 8px !important;
+}
+
+/* Footer */
+.select-footer {
+  padding: 20px 32px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1.5px solid var(--border);
+  background: linear-gradient(135deg, var(--white) 0%, var(--bg-light) 100%);
+  flex-shrink: 0;
+}
+
+.btn-cancel {
+  padding: 12px 28px;
+  background: var(--white);
+  color: var(--text-gray);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: var(--bg-light);
+  border-color: var(--text-gray);
+  color: var(--text-dark);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 760px) {
+  .select-modal {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .select-header {
+    padding: 20px 24px;
+  }
+
+  .select-header h2 {
+    font-size: 18px;
+  }
+
+  .select-body {
+    padding: 16px 20px;
+  }
+
+  .select-footer {
+    padding: 16px 20px;
+  }
+
+  .doctorant-card {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .doctorant-details {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-select-doctorant {
+    width: 100%;
+    text-align: center;
+  }
+
+  .search-bar-select {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .search-count {
+    width: 100%;
+    text-align: left;
+    padding: 0;
+  }
+
+  /* Table responsive */
+  .doctorants-table {
+    font-size: 12px;
+  }
+
+  .doctorants-table th,
+  .doctorants-table td {
+    padding: 10px 12px;
+  }
+
+  .doctorants-table th {
+    font-size: 11px;
+  }
+
+  .btn-select-doctorant {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}

@@ -5,6 +5,8 @@ import { getJuries, addDoctorant, updateDoctorant } from '../services/api';
 export default function CaseVid({ onclose, diploma }) {
   const [juryList, setJuryList] = useState([]);
   const [selectedJury, setSelectedJury] = useState([]);
+  const [juryCounter, setJuryCounter] = useState(0);
+  const [message, setMessage] = useState({ type: '', text: '' });
 
   const initialForm = {
     numero: diploma?.numero || "",
@@ -18,40 +20,38 @@ export default function CaseVid({ onclose, diploma }) {
     discipline_arb: diploma?.discipline_arb || "",
     specialite_fr: diploma?.specialite_fr || "",
     specialite_arb: diploma?.specialite_arb || "",
-    sujet_fr: diploma?.sujet_fr || "",
-    mention_fr: diploma?.mention_fr || "",
-    mention_arb: diploma?.mention_arb || "",
-    date_descution_jury: diploma?.date_descution_jury || "",
-    date_obtinu_diplome: diploma?.date_obtinu_diplome || "",
-    status: diploma?.status || "",
+    sujet_fr: diploma?.sujet_fr || ""
   };
 
   const [formData, setFormData] = useState(initialForm);
   const [submitting, setSubmitting] = useState(false);
 
-  // Bloquer le scroll du body
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = 'auto'; };
   }, []);
 
-  // Charger la liste des jurys
   useEffect(() => {
     getJuries()
       .then(res => setJuryList(res.data))
       .catch(err => console.error("Erreur chargement jurys:", err));
   }, []);
 
-  // Pré-remplir les jurys si on édite un doctorant existant
   useEffect(() => {
-    if (diploma?.juries) {
-      setSelectedJury(diploma.juries.map(j => ({
+    if (diploma?.juries && diploma?.juries.length > 0) {
+      const juries = diploma.juries.map((j, idx) => ({
+        uniqueId: `${j.id}-${idx}`,
         id: j.id,
         nom: j.nom,
         role: j.pivot?.role || "",
         grade: j.pivot?.grade || "",
         local: j.pivot?.local || "",
-      })));
+      }));
+      setSelectedJury(juries);
+      setJuryCounter(juries.length);
+    } else {
+      setSelectedJury([]);
+      setJuryCounter(0);
     }
   }, [diploma]);
 
@@ -61,28 +61,38 @@ export default function CaseVid({ onclose, diploma }) {
   };
 
   const handleSelectJury = (jury) => {
-    if (selectedJury.find(j => j.id === jury.id)) return;
+    const uniqueId = `${jury.id}-${juryCounter}`;
     setSelectedJury(prev => [...prev, {
+      uniqueId: uniqueId,
       id: jury.id,
       nom: jury.nom,
       role: "",
       grade: "",
       local: jury.local || "",
     }]);
+    setJuryCounter(prev => prev + 1);
   };
 
-  const handleJuryChange = (id, field, value) => {
+  const handleJuryChange = (uniqueId, field, value) => {
     setSelectedJury(prev =>
-      prev.map(j => j.id === id ? { ...j, [field]: value } : j)
+      prev.map(j => j.uniqueId === uniqueId ? { ...j, [field]: value } : j)
     );
   };
 
-  const handleRemoveJury = (id) => {
-    setSelectedJury(prev => prev.filter(j => j.id !== id));
+  const handleRemoveJury = (uniqueId) => {
+    setSelectedJury(prev => prev.filter(j => j.uniqueId !== uniqueId));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage({ type: '', text: '' });
+
+    // Validation minimale
+    if (!formData.nmb_inscription || !formData.cin) {
+      setMessage({ type: 'error', text: 'N° Inscription et CIN sont obligatoires!' });
+      return;
+    }
+
     const dataToSend = {
       ...formData,
       juries: selectedJury.map(j => ({
@@ -97,19 +107,26 @@ export default function CaseVid({ onclose, diploma }) {
       setSubmitting(true);
       if (diploma?.id) {
         await updateDoctorant(diploma.id, dataToSend);
-        alert("Doctorant mis à jour avec succès !");
+        setMessage({ type: 'success', text: '✓ Doctorant mis à jour avec succès!' });
       } else {
         await addDoctorant(dataToSend);
-        alert("Doctorant enregistré avec succès !");
+        setMessage({ type: 'success', text: '✓ Doctorant enregistré avec succès!' });
       }
-      onclose();
+      
+      setTimeout(() => {
+        onclose();
+      }, 1000);
     } catch (error) {
       console.error("Erreur lors de l'enregistrement:", error);
       const errors = error.response?.data?.errors;
       if (errors) {
-        alert("Erreurs:\n" + Object.values(errors).flat().join("\n"));
+        const errorMessages = Object.values(errors).flat().join('\n');
+        setMessage({ type: 'error', text: errorMessages });
       } else {
-        alert("Erreur: " + (error.response?.data?.message || error.message));
+        setMessage({ 
+          type: 'error', 
+          text: error.response?.data?.message || error.message || 'Une erreur est survenue'
+        });
       }
     } finally {
       setSubmitting(false);
@@ -121,12 +138,25 @@ export default function CaseVid({ onclose, diploma }) {
       <div className="doctorants-modal" onClick={(e) => e.stopPropagation()}>
 
         <div className="modal-header">
-          <h2>{diploma ? "Mettre à jour le Doctorant" : "Inscription d'un Doctorant"}</h2>
+          <h2>{diploma?.id ? "Mettre à jour le Doctorant" : "Enregistrement d'un Doctorant"}</h2>
           <button className="btn-close" onClick={onclose}>✕</button>
         </div>
 
         <div className="modal-body">
           <form className="doctorants-form" onSubmit={handleSubmit}>
+
+            {message.text && (
+              <div className={`message-alert message-${message.type}`} style={{
+                gridColumn: '1 / -1',
+                padding: '14px 16px',
+                borderRadius: '10px',
+                marginBottom: '12px',
+                fontSize: '13px',
+                fontWeight: '600',
+              }}>
+                {message.text}
+              </div>
+            )}
 
             <div className="input-group">
               <label htmlFor="cv-numero">Numéro</label>
@@ -188,35 +218,7 @@ export default function CaseVid({ onclose, diploma }) {
               <input type="text" name="sujet_fr" id="cv-sujet_fr" value={formData.sujet_fr} onChange={handleChange} />
             </div>
 
-            <div className="input-group">
-              <label htmlFor="cv-mention_fr">Mention</label>
-              <input type="text" name="mention_fr" id="cv-mention_fr" value={formData.mention_fr} onChange={handleChange} />
-            </div>
-
-            <div className="input-group">
-              <label htmlFor="cv-mention_arb">ميزة</label>
-              <input type="text" name="mention_arb" id="cv-mention_arb" value={formData.mention_arb} onChange={handleChange} dir="rtl" />
-            </div>
-
-            <div className="input-group">
-              <label htmlFor="cv-date_descution_jury">Date de soutenance</label>
-              <input type="date" name="date_descution_jury" id="cv-date_descution_jury" value={formData.date_descution_jury} onChange={handleChange} />
-            </div>
-
-            <div className="input-group">
-              <label htmlFor="cv-date_obtinu_diplome">Date d'obtention du diplôme</label>
-              <input type="date" name="date_obtinu_diplome" id="cv-date_obtinu_diplome" value={formData.date_obtinu_diplome} onChange={handleChange} />
-            </div>
-
-            <div className="input-group">
-              <label htmlFor="cv-status">Statut</label>
-              <select name="status" id="cv-status" value={formData.status} onChange={handleChange}>
-                <option value="">-- Sélectionner --</option>
-                <option value="Actif">Actif</option>
-                <option value="Diplômé">Diplômé</option>
-                <option value="Suspendu">Suspendu</option>
-              </select>
-            </div>
+            
 
             {/* Sélection du jury */}
             <div className="input-group full-width-field">
@@ -239,10 +241,10 @@ export default function CaseVid({ onclose, diploma }) {
                           <td>
                             <button
                               type="button"
+                              className="btn-add-jury"
                               onClick={() => handleSelectJury(j)}
-                              disabled={!!selectedJury.find(s => s.id === j.id)}
                             >
-                              {selectedJury.find(s => s.id === j.id) ? "✓ Ajouté" : "Ajouter"}
+                              + Ajouter
                             </button>
                           </td>
                         </tr>
@@ -255,50 +257,83 @@ export default function CaseVid({ onclose, diploma }) {
               )}
             </div>
 
-            {/* Jurys sélectionnés */}
             {selectedJury.length > 0 && (
-              <div className="full-width-field">
+              <div className="full-width-field jury-assigned">
                 <h4>Jury attribué :</h4>
-                <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr>
-                      <th>Nom</th>
-                      <th>Rôle</th>
-                      <th>Grade</th>
-                      <th>Établissement</th>
-                      <th>×</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedJury.map(j => (
-                      <tr key={j.id}>
-                        <td>{j.nom}</td>
-                        <td>
-                          <input value={j.role} placeholder="Ex: Président"
-                            onChange={e => handleJuryChange(j.id, 'role', e.target.value)} />
-                        </td>
-                        <td>
-                          <input value={j.grade} placeholder="Ex: Professeur"
-                            onChange={e => handleJuryChange(j.id, 'grade', e.target.value)} />
-                        </td>
-                        <td>
-                          <input value={j.local} placeholder="Ex: FST BM"
-                            onChange={e => handleJuryChange(j.id, 'local', e.target.value)} />
-                        </td>
-                        <td>
-                          <button type="button" onClick={() => handleRemoveJury(j.id)}>✕</button>
-                        </td>
+                <div className="jury-table-container">
+                  <table className="jury-table">
+                    <thead>
+                      <tr>
+                        <th>Nom</th>
+                        <th>Rôle</th>
+                        <th>Grade</th>
+                        <th>Établissement</th>
+                        <th>Action</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {selectedJury.map(j => (
+                        <tr key={j.uniqueId}>
+                          <td className="jury-nom">{j.nom}</td>
+                          <td className="jury-field">
+                            <select 
+                              value={j.role}
+                              onChange={e => handleJuryChange(j.uniqueId, 'role', e.target.value)}
+                              className="jury-select"
+                            >
+                              <option value="">-- Sélectionner --</option>
+                              <option value="Président">Président</option>
+                              <option value="Rapporteur">Rapporteur</option>
+                              <option value="Examinateur">Examinateur</option>
+                              <option value="Invité">Invité</option>
+                              <option value="Membre">Membre</option>
+                            </select>
+                          </td>
+                          <td className="jury-field">
+                            <select 
+                              value={j.grade}
+                              onChange={e => handleJuryChange(j.uniqueId, 'grade', e.target.value)}
+                              className="jury-select"
+                            >
+                              <option value="">-- Sélectionner --</option>
+                              <option value="Professeur">Professeur</option>
+                              <option value="Professeur Habilité">Professeur Habilité</option>
+                              <option value="Maître de Conférences">Maître de Conférences</option>
+                              <option value="Maître Assistant">Maître Assistant</option>
+                              <option value="Assistant">Assistant</option>
+                              <option value="Doctorant">Doctorant</option>
+                            </select>
+                          </td>
+                          <td className="jury-field">
+                            <input 
+                              type="text"
+                              value={j.local} 
+                              placeholder="Ex: FST BM"
+                              className="jury-input"
+                              onChange={e => handleJuryChange(j.uniqueId, 'local', e.target.value)}
+                            />
+                          </td>
+                          <td className="jury-action">
+                            <button 
+                              type="button" 
+                              className="btn-remove-jury"
+                              onClick={() => handleRemoveJury(j.uniqueId)}
+                            >
+                              ✕ Retirer
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
 
             <div className="doctorants-actions">
               <button type="button" className="btn-secondary" onClick={onclose}>Annuler</button>
               <button type="submit" className="btn-primary" disabled={submitting}>
-                {submitting ? "En cours..." : (diploma ? "Mettre à jour" : "Enregistrer")}
+                {submitting ? "En cours..." : (diploma?.id ? "Mettre à jour" : "Enregistrer")}
               </button>
             </div>
 

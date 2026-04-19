@@ -1,199 +1,168 @@
-import React, { useState } from 'react';
-import CaseVid from './card-de-case-vid';
+  import React, { useState, useEffect } from 'react';
+import DiplomeForm from '../components/DiplomeForm';
+import SelectDoctorant from './select-doctorant';
+import DoctorantDetailsModal from '../components/DoctorantDetailsModal';
 import "./style/style-diplomas.css";
+import API from '../services/api';
 
 export default function Diplomas() {
-  const [showinputvid, setShowinputvid] = useState(false);
-  const [selectedDiploma, setSelectedDiploma] = useState(null);
+  const [showDiplomeForm, setShowDiplomeForm] = useState(false);
+  const [showSelectDoctorant, setShowSelectDoctorant] = useState(false);
+  const [showDoctorantDetails, setShowDoctorantDetails] = useState(false);
+  const [selectedDoctorant, setSelectedDoctorant] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchCount, setSearchCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [diplomes, setDiplomes] = useState([]);
+  const [availableDoctorants, setAvailableDoctorants] = useState([]);
 
-
-  const [diplomas, setDiplomas] = useState([
-    {
-      numero: "D2026-001",
-      nmb_inscription: "INS-1001",
-      nomfr: "Amine El Fassi",
-      nomarb: "أمين الفاسي",
-      cin: "J123456",
-      date_naissance: "2003-05-14",
-      lieu_naissance_arb: "بني ملال",
-      discipline_fr: "",
-      discipline_arb: "الاعلاميات",
-      specialite_fr: "Intelligence Artificielle",
-      specialite_arb: "الذكاء الاصطناعي",
-      sujet_fr: "Optimisation des systèmes intelligents",
-      mention_fr: "Très Bien",
-      mention_arb: "جيد جدا",
-      jury_id: "1",
-      grde: "Doctorant 1ère année",
-      lorole: "Étudiant",
-      local: "FST Béni Mellal",
-      status: "Actif"
-    },
-    {
-      numero: "D2026-002",
-      nmb_inscription: "INS-1002",
-      nomfr: "Sara Benali",
-      nomarb: "سارة بنعلي",
-      cin: "J654321",
-      date_naissance: "2002-11-22",
-      lieu_naissance_arb: "الرباط",
-      discipline_fr: "Mathématiques",
-      discipline_arb: "الرياضيات",
-      specialite_fr: "Algèbre avancée",
-      specialite_arb: "الجبر المتقدم",
-      sujet_fr: "Étude des structures algébriques",
-      mention_fr: "Bien",
-      mention_arb: "جيد",
-      jury_id: "2",
-      grde: "Doctorante 2ème année",
-      lorole: "",
-      local: "FST Settat",
-      status: "Actif"
-    },
-  ]);
-
-  const handlediplomselect = (numero) => {
-    const selected = diplomas.find(d => d.numero === numero);
-    setSelectedDiploma(selected);
-    setShowinputvid(true);
-  };
-
-  const handleAddNew = () => {
-    setSelectedDiploma(null);
-    setShowinputvid(true);
-  };
-
-  const handleDelete = (numero) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce doctorant ?")) {
-      setDiplomas(diplomas.filter(d => d.numero !== numero));
+  const fetchDiplomas = async () => {
+    try {
+      setLoading(true);
+      const response = await API.get('/diplomes');
+      setDiplomes(response.data);
+    } catch (error) {
+      console.error('Erreur chargement diplwmes:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const diplomasWithStatus = diplomas.map(diploma => {
-    const isIncomplete =
-      (!diploma.nomfr && !diploma.nomarb) ||
-      !diploma.numero ||
-      !diploma.cin ||
-      (!diploma.discipline_fr && !diploma.discipline_arb) ||
-      (!diploma.specialite_fr && !diploma.specialite_arb);
+  const fetchDoctorants = async () => {
+    try {
+      const response = await API.get('/doctorants');
+      setAvailableDoctorants(response.data);
+    } catch (error) {
+      console.error('Erreur chargement doctorants:', error);
+    }
+  };
 
-    return {
-      ...diploma,
-      computedStatus: isIncomplete ? "Incomplet" : "Complet",
-    };
+  useEffect(() => {
+    fetchDiplomas();
+    fetchDoctorants();
+  }, []);
+
+  const handleDiplomaSelect = (id) => {
+    const selected = diplomes.find(d => d.id === id);
+    if (selected && selected.doctorant) {
+      setSelectedDoctorant(selected.doctorant);
+      setShowDoctorantDetails(true);
+    }
+  };
+
+  const handleAddNew = () => {
+    setShowSelectDoctorant(true);
+  };
+
+  const handleSelectDoctorant = (doctorant) => {
+    setSelectedDoctorant(doctorant);
+    setShowSelectDoctorant(false);
+    setShowDiplomeForm(true);
+  };
+
+  const handleDiplomeSuccess = () => {
+    fetchDiplomas();
+    setSelectedDoctorant(null);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Etes-vous sur de vouloir supprimer ce diplome ?')) {
+      try {
+        await API.delete(/diplomes/+id);
+        setDiplomes(diplomes.filter(d => d.id !== id));
+      } catch (error) {
+        console.error('Erreur suppression:', error);
+        alert('Erreur lors de la suppression: ' + (error.response?.data?.message || error.message));
+      }
+    }
+  };
+
+  const diplomasWithDetails = diplomes.filter(d => {
+    const s = searchTerm.toLowerCase();
+    return (
+      (d.doctorant?.nomfr || '').toLowerCase().includes(s) ||
+      (d.doctorant?.nomarb || '').toLowerCase().includes(s) ||
+      (d.doctorant?.cin || '').toLowerCase().includes(s) ||
+      (d.numero_diplome || '').toLowerCase().includes(s)
+    );
   });
 
   return (
     <div className="diplomas-container">
       <div className="diplomas-header">
-        <h1>Gestion des Doctorants & Diplômes</h1>
+        <h1>Gestion des Diplômes</h1>
         <button className="btn-add" onClick={handleAddNew}>
-          <span>+</span> Nouveau Doctorant
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Nouveau Diplôme
         </button>
       </div>
-
       <div className="table-card">
         <table className="diplomas-table">
           <thead>
-            <div className="search-container">
-              <input
-                type="text"
-                placeholder="Rechercher un doctorant..."
-                className="search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              {searchCount > 0 && (
-                <span className="search-results">
-                  {searchCount} résultats trouvés
-                </span>
-              )}
-            </div>
             <tr>
-              <th>Numéro</th>
-              <th>Nom & Prénom</th>
+              <th colSpan="5">
+                <div className="search-container">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '-40px', zIndex: 1, marginLeft: '12px' }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input type="text" placeholder="Rechercher un diplôme, un doctorant..." className="search-input" style={{ paddingLeft: '45px' }} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                  {searchTerm && <span className="search-results">{diplomasWithDetails.length} résultats</span>}
+                </div>
+              </th>
+            </tr>
+            <tr>
+              <th>N° Diplôme</th>
+              <th>Doctorant</th>
               <th>CIN</th>
-              <th>Discipline / Spécialité</th>
               <th>Mention</th>
-              <th>Statut</th>
               <th>Actions</th>
-              <th>Impression</th>
             </tr>
           </thead>
-
           <tbody>
-            {diplomasWithStatus.length > 0 ? (
-              diplomasWithStatus.map((diploma) => (
-                <tr key={diploma.nmb_inscription || diploma.numero}>
+            {loading ? (
+              <tr>
+                <td colSpan="5" style={{ textAlign: 'center', padding: '40px' }}>
+                   <div style={{ color: '#4f46e5', fontWeight: '600' }}>Chargement en cours...</div>
+                </td>
+              </tr>
+            ) : diplomasWithDetails.length > 0 ? (
+              diplomasWithDetails.map((diplome) => (
+                <tr key={diplome.id} onClick={() => handleDiplomaSelect(diplome.id)}>
+                  <td><span style={{ fontWeight: '600', color: '#4f46e5' }}>{diplome.numero_diplome || 'N/A'}</span></td>
+                  <td>{diplome.doctorant?.nomfr || 'N/A'}</td>
+                  <td>{diplome.doctorant?.cin || 'N/A'}</td>
                   <td>
-                    <span className={diploma.numero ? "" : "text-empty"}>
-                      {diploma.numero || "Non défini"}
+                    <span className={`status-badge ${diplome.mention_fr ? 'status-complet' : 'status-incomplet'}`}>
+                      {diplome.mention_fr || 'À renseigner'}
                     </span>
                   </td>
                   <td>
-                    <div>
-                      <div style={{ fontWeight: 600 }}>{diploma.nomfr || "---"}</div>
-                      <div style={{ fontSize: '12px', color: '#666' }} dir="rtl">{diploma.nomarb}</div>
-                    </div>
-                  </td>
-                  <td>{diploma.cin || <span className="text-empty">---</span>}</td>
-                  <td>
-                    <div style={{ maxWidth: '200px' }}>
-                      <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {diploma.discipline_fr || diploma.discipline_arb || <span className="text-empty">Discipline...</span>}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {diploma.specialite_fr || diploma.specialite_arb}
-                      </div>
-                    </div>
-                  </td>
-                  <td>{diploma.mention_fr || <span className="text-empty">---</span>}</td>
-                  <td>
-                    <span className={`status-badge status-${diploma.computedStatus.toLowerCase()}`}>
-                      {diploma.computedStatus}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="action-buttons">
-                      <button
-                        className="btn-icon view"
-                        title="Voir / Modifier"
-                        onClick={() => handlediplomselect(diploma.numero)}
-                      >
+                    <div className="action-buttons" onClick={(e) => e.stopPropagation()}>
+                      <button onClick={() => handleDiplomaSelect(diplome.id)} className="btn-icon view">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         Voir
                       </button>
-                      <button
-                        className="btn-icon delete"
-                        title="Supprimer"
-                        onClick={() => handleDelete(diploma.numero)}
-                      >
-                        🗑️
+                      <button onClick={() => handleDelete(diplome.id)} className="btn-icon delete">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        Supprimer
                       </button>
                     </div>
-                  </td>
-                  <td>
-                    <button className="btn-print-mini">Imprimer 🖨️</button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>
-                  Aucun doctorant trouvé.
-                </td>
+                <td colSpan="5" className="text-empty">Aucun diplôme trouvé</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-
-      {showinputvid && (
-        <CaseVid
-          onclose={() => setShowinputvid(false)}
-          diploma={selectedDiploma}
-        />
+      {showDoctorantDetails && selectedDoctorant && (
+        <DoctorantDetailsModal doctorant={selectedDoctorant} onClose={() => { setShowDoctorantDetails(false); setSelectedDoctorant(null); }} />
+      )}
+      {showSelectDoctorant && (
+        <SelectDoctorant onclose={() => setShowSelectDoctorant(false)} onSelect={handleSelectDoctorant} availableDoctorants={availableDoctorants} />
+      )}
+      {showDiplomeForm && selectedDoctorant && (
+        <DiplomeForm doctorant={selectedDoctorant} onClose={() => { setShowDiplomeForm(false); setSelectedDoctorant(null); }} onSuccess={handleDiplomeSuccess} />
       )}
     </div>
   );

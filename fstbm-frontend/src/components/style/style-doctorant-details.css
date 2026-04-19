@@ -1,0 +1,256 @@
+.details-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.details-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 2px solid #f0f0f0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.details-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.details-body {
+  padding: 24px;
+}
+
+.info-section {
+  margin-bottom: 32px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9fafb;
+}
+
+.info-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 8px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.info-group p {
+  font-size: 14px;
+  color: #1f2937;
+  margin: 0;
+  padding: 8px 0;
+  word-break: break-word;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background-color: #fef3c7;
+  color: #92400e;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.details-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 24px;
+}
+
+.btn-close {
+  padding: 10px 24px;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-close:hover {
+  background-color: #5568d3;
+}
+
+/* Tableau Diplômes */
+.diplomes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.diplomes-table thead {
+  background-color: #667eea;
+  color: white;
+}
+
+.diplomes-table thead th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.diplomes-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.diplomes-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.diplomes-table tbody td {
+  padding: 12px;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.no-data {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 16px;
+  font-style: italic;
+}
+
+/* Tableau Jury */
+.jury-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.jury-table thead {
+  background-color: #764ba2;
+  color: white;
+}
+
+.jury-table thead th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.jury-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.jury-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.jury-table tbody td {
+  padding: 12px;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info-row {
+    grid-template-columns: 1fr;
+  }
+
+  .details-modal {
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .details-header h2 {
+    font-size: 18px;
+  }
+
+  .info-section {
+    padding: 12px;
+  }
+
+  .details-body {
+    padding: 16px;
+  }
+}

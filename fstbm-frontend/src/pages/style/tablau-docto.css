@@ -98,8 +98,8 @@ body {
    ============================================================ */
 .btn-close {
   position: absolute;
-  top: 10px;
-  right: -180px;
+  top: 15px;
+  right: 15px;
   background: #ef4444;
   color: #fff;
   border: 1px solid #ef4444;
@@ -342,6 +342,15 @@ body {
   background: #fef9c3;
   color: #92400e;
   border: 1px solid #fde68a;
+}
+
+.fill-info-msg {
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-style: italic;
+  display: block;
+  max-width: 200px;
+  line-height: 1.2;
 }
 
 /* ============================================================

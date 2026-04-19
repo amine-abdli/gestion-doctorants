@@ -10,7 +10,7 @@ class Doctorant extends Model
     use HasFactory;
 
     protected $fillable = [
-        'numero',
+     
         'nmb_inscription',
         'nomfr',
         'nomarb',
@@ -22,10 +22,7 @@ class Doctorant extends Model
         'specialite_fr',
         'specialite_arb',
         'sujet_fr',
-        'mention_fr',
-        'mention_arb',
-        'date_descution_jury',
-        'date_obtinu_diplome',
+        
         'status',
     ];
 
@@ -37,5 +34,13 @@ class Doctorant extends Model
         return $this->belongsToMany(Jury::class, 'doctorant_jury')
             ->withPivot('role', 'grade', 'local')
             ->withTimestamps();
+    }
+
+    /**
+     * Un doctorant peut avoir plusieurs diplômes
+     */
+    public function diplomes()
+    {
+        return $this->hasMany(Diplome::class);
     }
 }
