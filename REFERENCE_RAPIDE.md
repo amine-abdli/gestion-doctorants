@@ -1,4 +1,4 @@
-# 🎯 Tableau de Référence Rapide
+#  Tableau de Référence Rapide
 
 ## 📊 Résumé des Actions Principales
 
