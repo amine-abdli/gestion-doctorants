@@ -54,6 +54,7 @@ try {
     $table = $section->addTable();
     $table->addRow();
     $table->addCell(1500)->addText('Nom');
+    $table->addCell(1500)->addText('Nom Modifié');
     $table->addCell(1500)->addText('Rôle');
     $table->addCell(1500)->addText('Grade');
     $table->addCell(1500)->addText('Local');
@@ -61,6 +62,7 @@ try {
     // Add cloneable row with placeholder
     $table->addRow();
     $table->addCell(1500)->addText('${jury_nom}');
+    $table->addCell(1500)->addText('${jury_nom_modifier}');
     $table->addCell(1500)->addText('${jury_role}');
     $table->addCell(1500)->addText('${jury_grade}');
     $table->addCell(1500)->addText('${jury_local}');

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // The 'status' column does not exist in the 'diplomes' table.
-        // It exists in the 'doctorants' table. This migration is a no-op.
+        // 'nom_modifier' already exists in the original create_doctorant_jury migration.
+        // This migration is a no-op to avoid duplicate column errors.
     }
 
     /**

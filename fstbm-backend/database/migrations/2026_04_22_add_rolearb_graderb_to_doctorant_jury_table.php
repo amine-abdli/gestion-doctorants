@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // The 'status' column does not exist in the 'diplomes' table.
-        // It exists in the 'doctorants' table. This migration is a no-op.
+        Schema::table('doctorant_jury', function (Blueprint $table) {
+            $table->string('rolearb')->nullable()->after('role');
+            $table->string('graderb')->nullable()->after('grade');
+        });
     }
 
     /**
@@ -20,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Nothing to reverse.
+        Schema::table('doctorant_jury', function (Blueprint $table) {
+            $table->dropColumn(['rolearb', 'graderb']);
+        });
     }
 };

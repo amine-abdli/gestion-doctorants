@@ -67,7 +67,7 @@ export default function Diplomas() {
   const handleDelete = async (id) => {
     if (window.confirm('Etes-vous sur de vouloir supprimer ce diplome ?')) {
       try {
-        await API.delete(/diplomes/+id);
+        await API.delete(`/diplomes/${id}`);
         setDiplomes(diplomes.filter(d => d.id !== id));
       } catch (error) {
         console.error('Erreur suppression:', error);
@@ -95,6 +95,7 @@ export default function Diplomas() {
           Nouveau Diplôme
         </button>
       </div>
+      
       <div className="table-card">
         <table className="diplomas-table">
           <thead>

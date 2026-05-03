@@ -41,6 +41,7 @@ try {
         foreach ($doctorant->juries as $index => $jury) {
             $i = $index + 1;
             $template->setValue("jury_nom#$i", $jury->nom ?? '');
+            $template->setValue("jury_nom_modifier#$i", $jury->pivot->nom_modifier ?? '');
             $template->setValue("jury_role#$i", $jury->pivot->role ?? '');
             $template->setValue("jury_grade#$i", $jury->pivot->grade ?? '');
             $template->setValue("jury_local#$i", $jury->pivot->local ?? '');

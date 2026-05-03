@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::dropIfExists('juries');
         Schema::create('juries', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');           // Nom complet (français ou arabe)
-            $table->string('specialite')->nullable(); // Spécialité
-            $table->string('local')->nullable();      // Établissement/Lieu
+            $table->string('nom');   
+            $table->string('nomarb')->nullable();   
+            $table->string('specialite')->nullable();
+            $table->string('local')->nullable();     
             $table->timestamps();
         });
     }

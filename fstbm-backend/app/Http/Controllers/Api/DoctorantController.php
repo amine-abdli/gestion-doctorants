@@ -14,12 +14,10 @@ class DoctorantController extends Controller
         return response()->json(Doctorant::with('juries', 'diplomes')->get());
     }
 
-    // ================= STORE =================
     public function store(Request $request)
     {
         try {
             $validated = $request->validate([
-                'numero'              => 'nullable|string',
                 'nmb_inscription'     => 'required|string|unique:doctorants',
                 'nomfr'               => 'nullable|string',
                 'nomarb'              => 'nullable|string',
@@ -31,30 +29,35 @@ class DoctorantController extends Controller
                 'specialite_fr'       => 'nullable|string',
                 'specialite_arb'      => 'nullable|string',
                 'sujet_fr'            => 'nullable|string',
-                'mention_fr'          => 'nullable|string',
-                'mention_arb'         => 'nullable|string',
                 'date_descution_jury' => 'nullable|date',
-                'date_obtinu_diplome' => 'nullable|date',
+                'heure_soutenance'    => 'nullable|string',
+                'local_soutenance'    => 'nullable|string',
+                'resume'              => 'nullable|string',
+                'mot_cle'             => 'nullable|string',
                 'status'              => 'nullable|string',
 
-                // juries pivot
+                // juries 
                 'juries'              => 'nullable|array',
                 'juries.*.id'         => 'required|exists:juries,id',
+                'juries.*.nom_modifier' => 'nullable|string',
                 'juries.*.role'       => 'nullable|string',
+                'juries.*.rolearb'    => 'nullable|string',
                 'juries.*.grade'      => 'nullable|string',
+                'juries.*.graderb'    => 'nullable|string',
                 'juries.*.local'      => 'nullable|string',
             ]);
 
-            // Créer le doctorant (sans les données pivot)
             $doctorantData = collect($validated)->except('juries')->toArray();
             $doctorant = Doctorant::create($doctorantData);
 
-            // Attacher les membres du jury — permet le même jury avec des rôles différents
             if (!empty($validated['juries'])) {
                 foreach ($validated['juries'] as $jury) {
                     $doctorant->juries()->attach($jury['id'], [
+                        'nom_modifier' => $jury['nom_modifier'] ?? '',
                         'role'  => $jury['role']  ?? '',
+                        'rolearb' => $jury['rolearb'] ?? '',
                         'grade' => $jury['grade'] ?? '',
+                        'graderb' => $jury['graderb'] ?? '',
                         'local' => $jury['local'] ?? '',
                     ]);
                 }
@@ -72,21 +75,18 @@ class DoctorantController extends Controller
         }
     }
 
-    // ================= SHOW =================
     public function show($id)
     {
         $doctorant = Doctorant::with('juries', 'diplomes')->findOrFail($id);
         return response()->json($doctorant);
     }
 
-    // ================= UPDATE =================
     public function update(Request $request, $id)
     {
         try {
             $doctorant = Doctorant::findOrFail($id);
 
             $validated = $request->validate([
-            
                 'nmb_inscription'     => 'sometimes|required|string|unique:doctorants,nmb_inscription,' . $id,
                 'nomfr'               => 'nullable|string',
                 'nomarb'              => 'nullable|string',
@@ -98,29 +98,36 @@ class DoctorantController extends Controller
                 'specialite_fr'       => 'nullable|string',
                 'specialite_arb'      => 'nullable|string',
                 'sujet_fr'            => 'nullable|string',
-                
-                'date_obtinu_diplome' => 'nullable|date',
+                'date_descution_jury' => 'nullable|date',
+                'heure_soutenance'    => 'nullable|string',
+                'local_soutenance'    => 'nullable|string',
+                'resume'              => 'nullable|string',
+                'mot_cle'             => 'nullable|string',
                 'status'              => 'nullable|string',
 
                 // juries pivot
                 'juries'              => 'nullable|array',
                 'juries.*.id'         => 'required|exists:juries,id',
+                'juries.*.nom_modifier' => 'nullable|string',
                 'juries.*.role'       => 'nullable|string',
+                'juries.*.rolearb'    => 'nullable|string',
                 'juries.*.grade'      => 'nullable|string',
+                'juries.*.graderb'    => 'nullable|string',
                 'juries.*.local'      => 'nullable|string',
             ]);
 
-            // Mettre à jour le doctorant (sans les données pivot)
             $doctorantData = collect($validated)->except('juries')->toArray();
             $doctorant->update($doctorantData);
 
-            // Détacher tous puis re-attacher — permet même jury avec rôles différents
             if (array_key_exists('juries', $validated)) {
                 $doctorant->juries()->detach();
                 foreach ($validated['juries'] as $jury) {
                     $doctorant->juries()->attach($jury['id'], [
+                        'nom_modifier' => $jury['nom_modifier'] ?? '',
                         'role'  => $jury['role']  ?? '',
+                        'rolearb' => $jury['rolearb'] ?? '',
                         'grade' => $jury['grade'] ?? '',
+                        'graderb' => $jury['graderb'] ?? '',
                         'local' => $jury['local'] ?? '',
                     ]);
                 }
@@ -138,7 +145,6 @@ class DoctorantController extends Controller
         }
     }
 
-    // ================= DELETE =================
     public function destroy($id)
     {
         $doctorant = Doctorant::findOrFail($id);

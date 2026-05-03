@@ -22,7 +22,11 @@ class Doctorant extends Model
         'specialite_fr',
         'specialite_arb',
         'sujet_fr',
-        
+        'date_descution_jury',
+        'heure_soutenance',
+        'local_soutenance',
+        'resume',
+        'mot_cle',
         'status',
     ];
 
@@ -32,7 +36,7 @@ class Doctorant extends Model
     public function juries()
     {
         return $this->belongsToMany(Jury::class, 'doctorant_jury')
-            ->withPivot('role', 'grade', 'local')
+            ->withPivot('role', 'rolearb', 'grade', 'graderb', 'nom_modifier', 'local')
             ->withTimestamps();
     }
 

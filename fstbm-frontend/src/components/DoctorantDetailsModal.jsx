@@ -34,7 +34,6 @@ export default function DoctorantDetailsModal({ doctorant, onClose }) {
 
   useEffect(() => {
     fetchDoctorantDetails();
-    // Charger aussi la liste des jurys disponibles pour le formulaire d'édition
     getJuries().then(r => setJuryList(r.data)).catch(err => console.error("Erreur jurys:", err));
   }, [doctorant?.id]);
 
@@ -82,7 +81,7 @@ export default function DoctorantDetailsModal({ doctorant, onClose }) {
   const handleEditSuccess = () => {
     setShowEditModal(false);
     setEditTarget(null);
-    fetchDoctorantDetails(); // Rafraîchir les détails après modification
+    fetchDoctorantDetails();
   };
 
   const editdiplome = (diplome) => {
@@ -93,7 +92,7 @@ export default function DoctorantDetailsModal({ doctorant, onClose }) {
   const handleDiplomeEditSuccess = () => {
     setShowEditDiplomeModal(false);
     setEditDiplomeTarget(null);
-    fetchDoctorantDetails(); // Rafraîchir pour voir les modifs du diplôme
+    fetchDoctorantDetails(); 
   };
 
 const handlePrint = async () => {
@@ -120,7 +119,6 @@ const handlePrint = async () => {
     window.URL.revokeObjectURL(url);
 
   } catch (error) {
-    // Quand responseType=blob, l'erreur du serveur est un blob — on le lit pour afficher le vrai message
     if (error.response && error.response.data instanceof Blob) {
       const text = await error.response.data.text();
       try {
@@ -232,22 +230,25 @@ const handlePrint = async () => {
               <table className="jury-table">
                 <thead>
                   <tr>
-                    
-                  
-                    <th>Local</th>
-                    <th>Grade</th>
+                    <th>Nom (FR)</th>
+                    <th>الإسم</th>
                     <th>Rôle</th>
-                    <th>Nom </th>
+                    <th>الدور</th>
+                    <th>Grade</th>
+                    <th>الرتبة</th>
+                    <th>Établissement</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.juries.map((jury, index) => (
                     <tr key={index}>
-                     
-                      <td>{jury?.pivot?.local || "---"}</td>
-                      <td>{jury?.pivot?.grade || "---"}</td>
+                      <td>{jury?.nom || "---"}</td>
+                      <td dir="rtl">{jury?.nomarb || "---"}</td>
                       <td>{jury?.pivot?.role || "---"}</td>
-                      <td>{jury?.nom|| "---"}</td>
+                      <td dir="rtl">{jury?.pivot?.rolearb || "---"}</td>
+                      <td>{jury?.pivot?.grade || "---"}</td>
+                      <td dir="rtl">{jury?.pivot?.graderb || "---"}</td>
+                      <td>{jury?.pivot?.local || "---"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -304,7 +305,12 @@ const handlePrint = async () => {
 
           
 
-          <button type="button" className="btn-print" onClick={handlePrint}>
+          <button type="button" className="btn-print" onClick={handlePrint} style={{ widows: 'fit-content', margin: '30px auto 0 auto', display: 'block' ,width: '200px', fontSize: '16px', padding: '10px 20px' ,borderRadius: '5px', backgroundColor: '#2c8857', color: '#fff', border: 'none', cursor: 'pointer' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                          <rect x="6" y="14" width="12" height="8"></rect>
+                                        </svg>
             Imprimer
           </button>
        

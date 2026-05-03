@@ -13,7 +13,7 @@ export default function Dashbord() {
                 </div>
                 <p className="dash-session">Session {new Date().getFullYear() - 1} - {new Date().getFullYear()} • Faculté des Sciences et Techniques</p>
             </div>
-            {/* les cardes doctorants et jury */}
+          
             <div className="caret-insericption">
                 <div className="doctorants">
                     <Link to='/doctorant' className="action-card">
@@ -61,20 +61,19 @@ export default function Dashbord() {
 
             </div>
 
-            {/* les carde de calcule */}
+         
 
             <div className="card-calcul-container">
                 <CardCalcul />
             </div>
 
 
-            {/* Diplomas Table */}
 
             <div className="diplomas-table-container">
                <DiplomasTable />
             </div>
 
-            {/* Footer */}
+          
             <footer className="dash-footer">
                 <span>© 2026 gestion-doctorants cree by     amine abdli</span>
                 <div className="footer-links">

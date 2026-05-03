@@ -20,6 +20,7 @@ return new class extends Migration
     $table->string('role');
     $table->string('grade');
     $table->string('local');
+    $table->string('nom_modifier');
 
     $table->timestamps();
 });

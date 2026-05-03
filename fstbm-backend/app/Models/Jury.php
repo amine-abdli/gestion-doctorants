@@ -11,8 +11,14 @@ class Jury extends Model
 
     protected $fillable = [
         'nom',
+        'nomarb',
         'specialite',
         'local',
+        'F',
+    ];
+
+    protected $casts = [
+        'F' => 'boolean',
     ];
 
     /**
@@ -21,7 +27,7 @@ class Jury extends Model
     public function doctorants()
     {
         return $this->belongsToMany(Doctorant::class, 'doctorant_jury')
-            ->withPivot('role', 'grade', 'local')
+            ->withPivot('role', 'grade', 'rolearb', 'graderb', 'nom_modifier', 'local')
             ->withTimestamps();
     }
 }

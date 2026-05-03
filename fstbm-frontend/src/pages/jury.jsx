@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { getJuries, addJury, deleteJury, getDoctorants, attachJuryToDoctorant } from "../services/api";
 import "./style/jury.css";
 
 export default function Jury() {
-    const [juryList, setJuryList]         = useState([]);
+    const [juryList, setJuryList] = useState([]);
     const [doctorantsList, setDoctorantsList] = useState([]);
-    const [loading, setLoading]           = useState(true);
+    const [loading, setLoading] = useState(true);
     const [jurySearchTerm, setJurySearchTerm] = useState("");
     const [expandedJury, setExpandedJury] = useState(null);
 
     const [isAddJuryOpen, setIsAddJuryOpen] = useState(false);
-    const [addForm, setAddForm]           = useState({ nom: "", specialite: "", local: "" });
+    const [addForm, setAddForm] = useState({ nom: "", nomarb: "", specialite: "", local: "", F: false });
     const [addSubmitting, setAddSubmitting] = useState(false);
 
-    const [affectModal, setAffectModal]   = useState(null); 
+    const [affectModal, setAffectModal] = useState(null);
     const [affectSearch, setAffectSearch] = useState("");
-    const [affectForm, setAffectForm]     = useState({ doctorant_id: "", role: "", grade: "", local: "" });
+    const [affectForm, setAffectForm] = useState({ doctorant_id: "", role: "", rolearb: "", grade: "", graderb: "", local: "" });
     const [affectSubmitting, setAffectSubmitting] = useState(false);
 
     useEffect(() => {
@@ -29,9 +29,60 @@ export default function Jury() {
 
     const filteredJury = juryList.filter(item =>
         (item.nom || "").toLowerCase().includes(jurySearchTerm.toLowerCase()) ||
+        (item.nomarb || "").toLowerCase().includes(jurySearchTerm.toLowerCase()) ||
         (item.specialite || "").toLowerCase().includes(jurySearchTerm.toLowerCase()) ||
         (item.local || "").toLowerCase().includes(jurySearchTerm.toLowerCase())
     );
+    //   const rolesarb = {
+    //   "Président": "رئيس اللجنة",
+    //   "Rapporteur": "مقرر",
+    //   "Examinateur": "ممتحن",
+    //   "Co-encadrant": "مشرف مشارك",
+    //   "Invité": "ضيف",
+    //   "Encadrant": "مشرف",
+    //   "Directeur de thèse": "مدير الأطروحة",
+    //   "Co-Directeur de thèse": "مدير مشارك للأطروحة",
+    //   "Membre": "عضو"
+    // };
+
+
+    // const gradesarb = {
+    //   "Professeur": "أستاذ",
+    //   "Professeur Habilité": "أستاذ مؤهل",
+    //   "Maître de Conférences": "أستاذ محاضر",
+    //   "Maître Assistant": "أستاذ مساعد",
+    //   "Maitre de conferences": "أستاذ محاضر",
+    //   "Maitre de conferences Habilité": "أستاذ محاضر مؤهل",
+    //   "Professeur de l'enseignement superieur": "أستاذ التعليم العالي"
+    // };
+    const rolesarb = {
+        "Président": "رئيسا",
+        "Rapporteur": "عضو",
+        "Examinateur": "عضو",
+        "Co-encadrant": "عضو",
+        "Invité": "عضو",
+        "Encadrant": "عضو",
+        "Directeur de thèse": "عضو",
+        "Co-Directeur de thèse": "عضو",
+        "Membre": "عضو"
+    };
+
+
+    const gradesarb = {
+        // "Professeur": "أستاذ",
+        // "Professeur Habilité": "أستاذ مؤهل",
+        // "Maître de Conférences Habilité": "أستاذ محاضر مؤهل",
+        // "Maître Assistant": "أستاذ مساعد",
+        // "Maitre de conferences": "أستاذ محاضر",
+        "Maitre de conferences Habilité": "مؤهل محاضر أستاذ",
+        "Maître de conférences Habilitée": "مؤهل محاضر أستاذة",
+        "Professeur de l'enseignement superieur": " العالي التعليم أستاذ",
+        "Professeure de l’enseignement supérieur": "العالي التعليم أستاذة "
+
+
+
+
+    };
 
     const handleAddSubmit = async (e) => {
         e.preventDefault();
@@ -40,7 +91,7 @@ export default function Jury() {
             setAddSubmitting(true);
             const res = await addJury(addForm);
             setJuryList(prev => [...prev, { ...res.data, doctorants: [] }]);
-            setAddForm({ nom: "", specialite: "", local: "" });
+            setAddForm({ nom: "", nomarb: "", specialite: "", local: "", F: false });
             setIsAddJuryOpen(false);
         } catch (err) {
             alert("Erreur: " + (err.response?.data?.message || "Erreur serveur"));
@@ -61,7 +112,7 @@ export default function Jury() {
     const openAffectModal = (jury) => {
         setAffectModal(jury);
         setAffectSearch("");
-        setAffectForm({ doctorant_id: "", role: "", grade: "", local: jury.local || "" });
+        setAffectForm({ doctorant_id: "", nomarb: jury.nomarb || "", role: "", rolearb: "", grade: "", graderb: "", local: jury.local || "" });
     };
 
     const handleSelectDoctorant = (doc) => {
@@ -87,8 +138,8 @@ export default function Jury() {
     const filteredDoctorantsForAffect = doctorantsList.filter(d => {
         const s = affectSearch.toLowerCase();
         return (d.nomfr || "").toLowerCase().includes(s) ||
-               (d.nomarb || "").toLowerCase().includes(s) ||
-               (d.nmb_inscription || "").toLowerCase().includes(s);
+            (d.nomarb || "").toLowerCase().includes(s) ||
+            (d.nmb_inscription || "").toLowerCase().includes(s);
     });
 
     const selectedDoc = doctorantsList.find(d => d.id === affectForm.doctorant_id);
@@ -115,15 +166,30 @@ export default function Jury() {
                         <h3>+ Ajouter un membre du Jury</h3>
                         <label>Nom complet *</label>
                         <input type="text" name="nom" value={addForm.nom}
-                            onChange={e => setAddForm(f => ({...f, nom: e.target.value}))}
-                            required placeholder="Ex: Prof. Ahmed Benali" />
+                            onChange={e => setAddForm(f => ({ ...f, nom: e.target.value }))}
+                            required placeholder="Ex: Prof. Amine abdli" />
+                        <label>الإسم الكامل (Arabe)</label>
+                        <input type="text" name="nomarb" value={addForm.nomarb}
+                            onChange={e => setAddForm(f => ({ ...f, nomarb: e.target.value }))}
+                            placeholder="Ex: أحمد بن علي" style={{ direction: 'rtl', textAlign: 'right' }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', marginTop: '8px' }}>
+                            <input
+                                type="checkbox"
+                                name="F"
+                                id="add-jury-F"
+                                checked={addForm.F}
+                                onChange={e => setAddForm(f => ({ ...f, F: e.target.checked }))}
+                                style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                            />
+                            <label htmlFor="add-jury-F" style={{ cursor: 'pointer', fontWeight: 500, margin: 0 }}>Féminin (F)</label>
+                        </div>
                         <label>Spécialité</label>
                         <input type="text" name="specialite" value={addForm.specialite}
-                            onChange={e => setAddForm(f => ({...f, specialite: e.target.value}))}
+                            onChange={e => setAddForm(f => ({ ...f, specialite: e.target.value }))}
                             placeholder="Ex: Informatique" />
                         <label>Établissement</label>
                         <input type="text" name="local" value={addForm.local}
-                            onChange={e => setAddForm(f => ({...f, local: e.target.value}))}
+                            onChange={e => setAddForm(f => ({ ...f, local: e.target.value }))}
                             placeholder="Ex: FST Béni Mellal" />
                         <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                             <button type="button" className="btn-secondary" style={{ flex: 1 }}
@@ -205,23 +271,45 @@ export default function Jury() {
                                 </div>
                             )}
 
+
+
                             <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>
                                 Rôle dans le jury *
                             </label>
                             <select
                                 value={affectForm.role}
-                                onChange={e => setAffectForm(f => ({...f, role: e.target.value}))}
+                                onChange={e => {
+                                    const selectedRole = e.target.value;
+                                    setAffectForm(f => ({ ...f, role: selectedRole, rolearb: rolesarb[selectedRole] || "" }));
+                                }}
                                 style={{ width: '100%', padding: '9px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '12px', boxSizing: 'border-box' }}
                             >
-                                <option value="">-- Sélectionner le rôle --</option>
-                                <option value="Président">Président</option>
-                                <option value="Rapporteur">Rapporteur</option>
-                                <option value="Examinateur">Examinateur</option>
-                                <option value="Co-encadrant">Co-encadrant</option>
-                                <option value="Encadrant">Encadrant</option>
-                                <option value="Directeur de these">Directeur de these </option>
-                                <option value="Co-Directeur de these">Co-Directeur de these</option>
-                                <option value="Membre">Membre</option>
+                                <option value="">-- Rôle --</option>
+                                {affectModal?.F ? (
+                                    <>
+                                        <option value="Président">Présidente</option>
+                                        <option value="Rapporteur">Rapporteuse</option>
+                                        <option value="Examinateur">Examinatrice</option>
+                                        <option value="Co-encadrant">Co-encadrante</option>
+                                        <option value="Invité">Invitée</option>
+                                        <option value="Encadrant">Encadrante</option>
+                                        <option value="Directeur de thèse">Directrice de thèse</option>
+                                        <option value="Co-Directeur de thèse">Co-Directrice de thèse</option>
+                                        <option value="Membre">Membre</option>
+                                    </>
+                                ) : (
+                                    <>
+                                        <option value="Président">Président</option>
+                                        <option value="Rapporteur">Rapporteur</option>
+                                        <option value="Examinateur">Examinateur</option>
+                                        <option value="Co-encadrant">Co-encadrant</option>
+                                        <option value="Invité">Invité</option>
+                                        <option value="Encadrant">Encadrant</option>
+                                        <option value="Directeur de thèse">Directeur de thèse</option>
+                                        <option value="Co-Directeur de thèse">Co-Directeur de thèse</option>
+                                        <option value="Membre">Membre</option>
+                                    </>
+                                )}
                             </select>
 
                             <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>
@@ -229,17 +317,23 @@ export default function Jury() {
                             </label>
                             <select
                                 value={affectForm.grade}
-                                onChange={e => setAffectForm(f => ({...f, grade: e.target.value}))}
+                                onChange={e => {
+                                    const selectedGrade = e.target.value;
+                                    setAffectForm(f => ({ ...f, grade: selectedGrade, graderb: gradesarb[selectedGrade] || "" }));
+                                }}
                                 style={{ width: '100%', padding: '9px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '12px', boxSizing: 'border-box' }}
                             >
-                                <option value="">-- Sélectionner le grade --</option>
-                                <option value="Professeur">Professeur</option>
-                                <option value="Professeur Habilité">Professeur Habilité</option>
-                                <option value="Maître de Conférences">Maître de Conférences</option>
-                                <option value="Maître Assistant">Maître Assistant</option>
-                                <option value="Maitre de conferences">Maitre de conferences</option>
-                                <option value="Maitre de conferences Habilité">Maitre de conferences Habilité</option>
-                                <option value="Professeur de l'enseignement superieur">Professeur de l'enseignement superieur</option>
+                                <option value="">-- Grade --</option>
+                                {affectModal?.F ? (
+                                    <>
+                                        <option value="Maître de conférences Habilitée">Maître de conférences Habilitée (F)</option>
+                                        <option value="Professeure de l’enseignement supérieur">Professeure de l’enseignement supérieur (F)</option>                                   </>
+                                ) : (
+                                    <>
+                                        <option value="Maitre de conferences Habilité">Maitre de conferences Habilité</option>
+                                        <option value="Professeur de l'enseignement superieur">Professeur de l'enseignement superieur</option>
+                                    </>
+                                )}
                             </select>
 
                             <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>
@@ -248,7 +342,7 @@ export default function Jury() {
                             <input
                                 type="text"
                                 value={affectForm.local}
-                                onChange={e => setAffectForm(f => ({...f, local: e.target.value}))}
+                                onChange={e => setAffectForm(f => ({ ...f, local: e.target.value }))}
                                 placeholder="Ex: FST Béni Mellal"
                                 style={{ width: '100%', padding: '9px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '20px', boxSizing: 'border-box' }}
                             />
@@ -268,7 +362,6 @@ export default function Jury() {
                 </div>
             )}
 
-            {/* ════ Tableau des Jurys ════ */}
             <div className="affichagejury">
                 {loading ? (
                     <p style={{ textAlign: 'center', padding: '30px', color: '#64748b' }}>Chargement...</p>
@@ -277,6 +370,8 @@ export default function Jury() {
                         <thead>
                             <tr>
                                 <th>Nom complet</th>
+                                <th>الإسم الكامل</th>
+                                <th>Genre</th>
                                 <th>Spécialité</th>
                                 <th>Établissement</th>
                                 <th style={{ textAlign: 'center' }}>Doctorants</th>
@@ -286,14 +381,20 @@ export default function Jury() {
                         </thead>
                         <tbody>
                             {filteredJury.length > 0 ? filteredJury.map(item => (
-                                <>
-                                    {/* ── Ligne jury ── */}
+                                <React.Fragment key={item.id}>
                                     <tr key={item.id}>
                                         <td style={{ fontWeight: 600, color: '#0f172a' }}>{item.nom}</td>
+                                        <td style={{ textAlign: 'right', direction: 'rtl', fontWeight: 600, color: '#0f172a' }}>{item.nomarb || "—"}</td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            {item.F ? (
+                                                <span style={{ background: '#fce7f3', color: '#be185d', padding: '2px 10px', borderRadius: '12px', fontSize: '0.78rem', fontWeight: 600 }}>F</span>
+                                            ) : (
+                                                <span style={{ background: '#dbeafe', color: '#1d4ed8', padding: '2px 10px', borderRadius: '12px', fontSize: '0.78rem', fontWeight: 600 }}>M</span>
+                                            )}
+                                        </td>
                                         <td style={{ color: '#475569', fontSize: '0.875rem' }}>{item.specialite || "—"}</td>
                                         <td style={{ color: '#475569', fontSize: '0.875rem' }}>{item.local || "—"}</td>
 
-                                        {/* Bouton voir doctorants */}
                                         <td style={{ textAlign: 'center' }}>
                                             <button
                                                 className="btn-action"
@@ -303,7 +404,6 @@ export default function Jury() {
                                             </button>
                                         </td>
 
-                                        {/* Bouton affecter doctorant */}
                                         <td style={{ textAlign: 'center' }}>
                                             <button
                                                 className="btn-primary"
@@ -314,7 +414,6 @@ export default function Jury() {
                                             </button>
                                         </td>
 
-                                        {/* Supprimer */}
                                         <td style={{ textAlign: 'center' }}>
                                             <button className="btn-danger" onClick={() => handleDelete(item.id)}>
                                                 🗑 Supprimer
@@ -322,10 +421,9 @@ export default function Jury() {
                                         </td>
                                     </tr>
 
-                                    {/* ── Accordion : doctorants associés ── */}
                                     {expandedJury === item.id && (
                                         <tr key={`expand-${item.id}`}>
-                                            <td colSpan="6" style={{ padding: 0, background: '#f8fafc' }}>
+                                            <td colSpan="8" style={{ padding: 0, background: '#f8fafc' }}>
                                                 <div style={{ padding: '12px 24px' }}>
                                                     <strong style={{ fontSize: '0.82rem', color: '#64748b', display: 'block', marginBottom: '8px' }}>
                                                         📋 Doctorants associés à <em>{item.nom}</em> :
@@ -338,7 +436,9 @@ export default function Jury() {
                                                                     <th style={{ padding: '8px 12px', textAlign: 'right' }}>الإسم</th>
                                                                     <th style={{ padding: '8px 12px', textAlign: 'center' }}>N° Inscription</th>
                                                                     <th style={{ padding: '8px 12px', textAlign: 'center' }}>Rôle</th>
+                                                                    <th style={{ padding: '8px 12px', textAlign: 'center' }}>الدور</th>
                                                                     <th style={{ padding: '8px 12px', textAlign: 'center' }}>Grade</th>
+                                                                    <th style={{ padding: '8px 12px', textAlign: 'center' }}>الرتبة</th>
                                                                     <th style={{ padding: '8px 12px', textAlign: 'center' }}>Établissement</th>
                                                                 </tr>
                                                             </thead>
@@ -353,7 +453,13 @@ export default function Jury() {
                                                                                 {d.pivot?.role || "—"}
                                                                             </span>
                                                                         </td>
+                                                                        <td style={{ padding: '8px 12px', textAlign: 'center' }}>
+                                                                            <span style={{ background: '#fef3c7', color: '#92400e', padding: '2px 10px', borderRadius: '12px', fontSize: '0.78rem', fontWeight: 600, direction: 'rtl', display: 'block' }}>
+                                                                                {d.pivot?.rolearb || "—"}
+                                                                            </span>
+                                                                        </td>
                                                                         <td style={{ padding: '8px 12px', textAlign: 'center', color: '#475569' }}>{d.pivot?.grade || "—"}</td>
+                                                                        <td style={{ padding: '8px 12px', textAlign: 'center', color: '#475569', direction: 'rtl' }}>{d.pivot?.graderb || "—"}</td>
                                                                         <td style={{ padding: '8px 12px', textAlign: 'center', color: '#475569' }}>{d.pivot?.local || "—"}</td>
                                                                     </tr>
                                                                 ))}
@@ -375,10 +481,10 @@ export default function Jury() {
                                             </td>
                                         </tr>
                                     )}
-                                </>
+                                </React.Fragment>
                             )) : (
                                 <tr>
-                                    <td colSpan="6" style={{ textAlign: 'center', padding: '30px', color: '#94a3b8' }}>
+                                    <td colSpan="8" style={{ textAlign: 'center', padding: '30px', color: '#94a3b8' }}>
                                         {jurySearchTerm ? "Aucun résultat" : "Aucun jury enregistré. Cliquez sur '+ Ajouter un membre'."}
                                     </td>
                                 </tr>

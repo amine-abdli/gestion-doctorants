@@ -98,13 +98,13 @@ body {
    ============================================================ */
 .btn-close {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 3px;
+  left: 835px;
   background: #ef4444;
   color: #fff;
   border: 1px solid #ef4444;
   padding: 6px 14px;
-  border-radius: 90px;
+ 
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 600;
@@ -125,6 +125,8 @@ body {
   position: relative;
   margin-bottom: 2rem;
   animation: slideDown 0.25s ease;
+
+  
 }
 
 /* ============================================================

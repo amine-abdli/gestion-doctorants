@@ -19,7 +19,7 @@ function getCompletionStatus(doc) {
     }
   }
 
-  if (!doc.juries) {
+  if (!Array.isArray(doc.juries) || doc.juries.length === 0) {
     return 'attente';
   }
 
@@ -71,15 +71,6 @@ export default function TablauDocto() {
     setShowEditModal(true);
   };
 
-  const handlePrintDiplome = (id) => {
-    const doc = doctorants.find(d => d.id === id);
-    alert(`Impression du diplôme pour ${doc?.nomfr || 'Doctorant'}.\n(Fonctionnalité en attente de génération PDF backend)`);
-  };
-
-  const handlePrintAvis = (id) => {
-    const doc = doctorants.find(d => d.id === id);
-    alert(`Impression de l'avis de soutenance pour ${doc?.nomfr || 'Doctorant'}.\n(Fonctionnalité en attente de génération PDF backend)`);
-  };
 
   const filteredDoctorants = doctorants.filter(doc => {
     const s = searchTerm.toLowerCase();
@@ -109,14 +100,20 @@ export default function TablauDocto() {
               ↻ Actualiser
             </button>
           </div>
-        </div>
+      
+        
+        <button className="btn-add-header" >
+         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+         import file excel
+        </button>
+       </div>
 
         {showDoctorantsForm && (
           <div className="form-overlay-wrapper">
             <button
               onClick={() => setShowDoctorantsForm(false)}
               className="btn-close"
-              title="Fermer"
+              title="Fermer" style={{ background: '#ef4444' , borderRadius: '40px'}}
             >
               ✕
             </button>

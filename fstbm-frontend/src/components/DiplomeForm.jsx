@@ -87,7 +87,7 @@ export default function DiplomeForm({ doctorant, diplome, onClose, onSuccess }) 
           <div className="form-section">
             <h3>Informations Complètes du Doctorant</h3>
             
-            <div className="form-row" style={{ marginLeft: '250px' }}>
+            <div className="form-row">
              
               <div className="form-group">
                 <label>N° Inscription</label>
@@ -149,7 +149,7 @@ export default function DiplomeForm({ doctorant, diplome, onClose, onSuccess }) 
             <div className="form-row">
               <div className="form-group">
                 <label>Sujet de Thèse (FR)</label>
-                <input type="text" value={doctorant?.sujet_fr || ""}  className="form-input" />
+                <input type="text" value={doctorant?.sujet_fr || ""} disabled className="form-input" />
               </div>
             </div>
 
@@ -158,7 +158,6 @@ export default function DiplomeForm({ doctorant, diplome, onClose, onSuccess }) 
            
           </div>
 
-          {/* Informations du Diplôme */}
           <div className="form-section">
             <h3>Informations du Diplôme</h3>
             

@@ -9,18 +9,14 @@ use Illuminate\Http\Request;
 
 class DiplomeController extends Controller
 {
-    /**
-     * Afficher tous les diplômes
-     */
+    
     public function index()
     {
         $diplomes = Diplome::with('doctorant')->latest()->get();
         return response()->json($diplomes);
     }
 
-    /**
-     * Créer un nouveau diplôme pour un doctorant
-     */
+    
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -40,18 +36,14 @@ class DiplomeController extends Controller
         ], 201);
     }
 
-    /**
-     * Afficher un diplôme spécifique
-     */
+   
     public function show($id)
     {
         $diplome = Diplome::with('doctorant')->findOrFail($id);
         return response()->json($diplome);
     }
 
-    /**
-     * Mettre à jour un diplôme
-     */
+  
     public function update(Request $request, $id)
     {
         $diplome = Diplome::findOrFail($id);
@@ -76,9 +68,6 @@ class DiplomeController extends Controller
         ]);
     }
 
-    /**
-     * Supprimer un diplôme
-     */
     public function destroy($id)
     {
         $diplome = Diplome::findOrFail($id);
@@ -89,9 +78,7 @@ class DiplomeController extends Controller
         ]);
     }
 
-    /**
-     * Récupérer tous les diplômes d'un doctorant
-     */
+ 
     public function byDoctorant($doctorantId)
     {
         $diplome = Diplome::where('doctorant_id', $doctorantId)
