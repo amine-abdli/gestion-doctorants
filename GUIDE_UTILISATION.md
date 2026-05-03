@@ -558,5 +558,4 @@ npm run dev
 - ✅ Guide d'utilisation complet
 
 ---
-
-**Merci d'utiliser l'application FST BM ! 🎓**
+Merci d'utiliser l'application FST BM ! 🎓
